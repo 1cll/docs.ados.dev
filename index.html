@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ADOS Docs — AI DevOps Platform</title>
+  <meta name="description" content="ADOS の製品ドキュメント。セットアップ、設定、機能ガイド、API リファレンスをカバー。">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📖</text></svg>">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsify-themeable@0/dist/css/theme-simple-dark.css">
+  <style>
+    :root {
+      --base-background-color: #06060f;
+      --base-color: #e2e8f0;
+      --theme-color: #7c3aed;
+      --sidebar-background: #0a0a1a;
+      --sidebar-border-color: rgba(255,255,255,0.06);
+      --sidebar-nav-link-color: #94a3b8;
+      --sidebar-nav-link-color--active: #a78bfa;
+      --sidebar-name-color: #e2e8f0;
+      --sidebar-name-font-weight: 800;
+      --heading-color: #e2e8f0;
+      --heading-h1-color: #a78bfa;
+      --heading-h2-color: #e2e8f0;
+      --link-color: #a78bfa;
+      --link-color--hover: #c4b5fd;
+      --blockquote-border-color: #7c3aed;
+      --blockquote-background: rgba(124,58,237,0.08);
+      --code-inline-background: rgba(124,58,237,0.12);
+      --code-inline-color: #c4b5fd;
+      --code-block-background: #0d1117;
+      --code-block-border-color: #30363d;
+      --table-row-even-background: rgba(255,255,255,0.02);
+      --notice-tip-border-color: #22c55e;
+      --notice-important-border-color: #f59e0b;
+      --cover-background-color: #06060f;
+      --cover-heading-color: #a78bfa;
+      --search-input-background-color: #111127;
+      --search-input-border-color: rgba(124,58,237,0.3);
+      --search-result-keyword-color: #a78bfa;
+      --sidebar-width: 280px;
+    }
+    body { font-family: 'Inter', -apple-system, sans-serif; }
+    .sidebar .app-name { padding: 20px 16px 10px; }
+    .sidebar .app-name a {
+      font-size: 1.3rem; font-weight: 900; letter-spacing: -0.02em;
+      color: var(--base-color) !important; text-decoration: none !important;
+    }
+    .sidebar .app-name a span { color: var(--theme-color); }
+    .markdown-section { max-width: 860px; }
+    .markdown-section table { width: 100%; }
+    .markdown-section table th { background: rgba(124,58,237,0.08); }
+    .markdown-section kbd {
+      background: #1a1a3a; border: 1px solid #333;
+      padding: 2px 6px; border-radius: 4px; font-size: 0.85em;
+    }
+    /* Custom callout blocks */
+    .markdown-section .tip,
+    .markdown-section .warning,
+    .markdown-section .danger {
+      border-radius: 8px; padding: 1rem 1.25rem;
+      margin: 1rem 0;
+    }
+    .markdown-section .tip { background: rgba(34,197,94,0.08); border-left: 4px solid #22c55e; }
+    .markdown-section .warning { background: rgba(245,158,11,0.08); border-left: 4px solid #f59e0b; }
+    .markdown-section .danger { background: rgba(239,68,68,0.08); border-left: 4px solid #ef4444; }
+    /* Nav footer */
+    .sidebar-nav-footer {
+      padding: 16px; border-top: 1px solid rgba(255,255,255,0.06);
+      font-size: 0.8rem; color: #64748b;
+    }
+    .sidebar-nav-footer a { color: #7c3aed; text-decoration: none; }
+    /* Copy code button */
+    .docsify-copy-code-button { background: #7c3aed !important; }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+  <script>
+    window.$docsify = {
+      name: '<a href="/"><span>ADOS</span> Docs</a>',
+      repo: 'https://github.com/1cll/ADOS',
+      loadSidebar: true,
+      loadNavbar: true,
+      subMaxLevel: 3,
+      auto2top: true,
+      search: {
+        paths: 'auto',
+        placeholder: 'ドキュメントを検索...',
+        noData: '見つかりませんでした',
+        depth: 3,
+      },
+      copyCode: {
+        buttonText: 'コピー',
+        successText: 'コピーしました',
+      },
+      pagination: {
+        previousText: '← 前へ',
+        nextText: '次へ →',
+        crossChapter: true,
+      },
+      themeColor: '#7c3aed',
+    };
+  </script>
+  <!-- Docsify core -->
+  <script src="https://cdn.jsdelivr.net/npm/docsify@4/lib/docsify.min.js"></script>
+  <!-- Plugins -->
+  <script src="https://cdn.jsdelivr.net/npm/docsify@4/lib/plugins/search.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/docsify-copy-code@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/docsify-pagination@2/dist/docsify-pagination.min.js"></script>
+  <!-- Syntax highlight -->
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-bash.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-go.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-yaml.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-json.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-typescript.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-docker.min.js"></script>
+</body>
+</html>
