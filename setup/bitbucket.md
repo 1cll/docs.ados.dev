@@ -1,30 +1,30 @@
-# Bitbucket 連携
+# Bitbucket Integration
 
-ADOS は Bitbucket Cloud に対応しています。
+ADOS supports Bitbucket Cloud.
 
-## セットアップ
+## Setup
 
-### 1. App Password の作成
+### 1. Create an App Password
 
-1. Bitbucket → Personal settings → **App passwords**
-2. **Create app password** をクリック
-3. 以下の権限を選択：
+1. Go to Bitbucket → Personal settings → **App passwords**
+2. Click **Create app password**
+3. Select the following permissions:
    - `Repositories: Read, Write, Admin`
    - `Pull requests: Read, Write`
    - `Issues: Read, Write`
-4. パスワードを生成してコピー
+4. Generate and copy the password
 
-### 2. ADOS に登録
+### 2. Register in ADOS
 
-1. ダッシュボードの **Settings** → **Connections** に移動
-2. **新しい接続を追加** → **Bitbucket** を選択
-3. 以下を入力：
-   - **接続名**: 任意の名前（例: `bitbucket-main`）
-   - **Username**: Bitbucket ユーザー名
-   - **App Password**: 生成したパスワード
-4. **保存**
+1. Go to **Settings** → **Connections** in the dashboard
+2. Click **Add New Connection** → Select **Bitbucket**
+3. Enter the following:
+   - **Connection Name**: Any name (e.g., `bitbucket-main`)
+   - **Username**: Your Bitbucket username
+   - **App Password**: The generated password
+4. Click **Save**
 
-### 3. リポジトリを登録
+### 3. Register a Repository
 
 ```yaml
 repos:
@@ -38,7 +38,7 @@ repos:
 
 ## Bitbucket Server
 
-Bitbucket Server（オンプレミス）への対応は今後のロードマップに含まれています。
+Bitbucket Server (on-premises) support is planned for future releases.
 
 > [!TIP]
-> Bitbucket Cloud のワークスペース ID は Settings → Workspace settings で確認できます。
+> You can find your Bitbucket Cloud workspace ID in Settings → Workspace settings.

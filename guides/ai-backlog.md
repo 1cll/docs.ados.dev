@@ -1,55 +1,55 @@
-# AI バックログ生成
+# AI Backlog Generation
 
-AI バックログ生成は、リポジトリのコードを分析して改善提案を自動的に Issue 化する機能です。
+AI Backlog Generation analyzes your repository's code and automatically creates improvement issues.
 
-## 概要
+## Overview
 
-AI がリポジトリ全体をスキャンし、以下の観点で改善ポイントを Issue として提案します：
+AI scans your entire repository and suggests improvements as issues from the following perspectives:
 
-- **セキュリティ** — 脆弱性やリスクの高いパターン
-- **パフォーマンス** — ボトルネックや非効率なコード
-- **コード品質** — 重複コード、複雑度の高い関数
-- **テスト** — テストカバレッジの低い部分
-- **ドキュメント** — 不足しているドキュメント
+- **Security** — Vulnerabilities and high-risk patterns
+- **Performance** — Bottlenecks and inefficient code
+- **Code Quality** — Duplicate code, high-complexity functions
+- **Testing** — Areas with low test coverage
+- **Documentation** — Missing documentation
 
-## 使い方
+## Usage
 
-### ダッシュボードから
+### From the Dashboard
 
-1. ダッシュボードで対象リポジトリを選択
-2. **Backlog** タブに移動
-3. **バックログを生成** をクリック
-4. AI がリポジトリを分析（数分かかります）
-5. 生成された提案を確認
-6. 必要な項目を選択して **Issue を作成**
+1. Select the target repository in the dashboard
+2. Navigate to the **Backlog** tab
+3. Click **Generate Backlog**
+4. AI analyzes the repository (may take a few minutes)
+5. Review the generated suggestions
+6. Select the desired items and click **Create Issues**
 
-### API から
+### Via API
 
 ```bash
-# バックログ生成を開始
+# Start backlog generation
 POST /api/github/{owner}/{repo}/backlog/generate
 
-# 生成結果を取得
+# Get generation results
 GET /api/github/{owner}/{repo}/backlog
 ```
 
-## 2パス分析
+## Two-Pass Analysis
 
-バックログ生成は 2 段階の分析プロセスで行われます：
+Backlog generation uses a two-stage analysis process:
 
-### パス 1: 広範スキャン
-- リポジトリ全体のファイル構造を把握
-- 主要なファイルの概要を分析
-- 技術スタックとアーキテクチャを理解
+### Pass 1: Broad Scan
+- Maps the repository's file structure
+- Analyzes key files at a high level
+- Identifies the tech stack and architecture
 
-### パス 2: 深掘り分析
-- パス 1 の結果を基に、重点領域を深掘り
-- 具体的なコード行レベルの改善提案
-- 優先度の付与（High / Medium / Low）
+### Pass 2: Deep Analysis
+- Deep dives into focus areas based on Pass 1 results
+- Provides code-line-level improvement suggestions
+- Assigns priority levels (High / Medium / Low)
 
-## フォーカスエリア
+## Focus Areas
 
-分析の重点領域をカスタマイズできます：
+Customize the analysis focus areas:
 
 ```yaml
 repos:
@@ -62,19 +62,19 @@ repos:
           - test-coverage
 ```
 
-| フォーカス | 説明 |
-|-----------|------|
-| `security` | セキュリティの脆弱性・リスク |
-| `performance` | パフォーマンスの改善ポイント |
-| `code-quality` | コード品質・可読性 |
-| `test-coverage` | テストカバレッジの向上 |
-| `documentation` | ドキュメントの整備 |
-| `accessibility` | アクセシビリティの改善 |
-| `refactoring` | リファクタリングの提案 |
+| Focus | Description |
+|-------|-------------|
+| `security` | Security vulnerabilities and risks |
+| `performance` | Performance improvement opportunities |
+| `code-quality` | Code quality and readability |
+| `test-coverage` | Test coverage improvements |
+| `documentation` | Documentation gaps |
+| `accessibility` | Accessibility improvements |
+| `refactoring` | Refactoring suggestions |
 
-## カスタムプロンプト
+## Custom Prompts
 
-独自の分析観点を追加できます：
+Add your own analysis criteria:
 
 ```yaml
 repos:
@@ -82,33 +82,33 @@ repos:
     workers:
       autopilot:
         focus:
-          - "APIのレスポンス形式が統一されているか確認"
-          - "エラーハンドリングのベストプラクティスに従っているか"
+          - "Check if API response formats are consistent"
+          - "Verify error handling follows best practices"
 ```
 
-## 生成される Issue の形式
+## Generated Issue Format
 
-AI が生成する Issue には以下の情報が含まれます：
+AI-generated issues include the following information:
 
 ```markdown
-## 問題
-`src/services/auth.ts` の認証ロジックで JWT トークンの有効期限チェックが
-実装されていません。
+## Problem
+The authentication logic in `src/services/auth.ts` does not implement
+JWT token expiration checking.
 
-## 影響
-期限切れのトークンでもアクセスが可能になるセキュリティリスクがあります。
+## Impact
+Expired tokens can still grant access, creating a security risk.
 
-## 提案する修正
-- `validateToken()` 関数に有効期限チェックを追加
-- 期限切れの場合は 401 Unauthorized を返す
+## Suggested Fix
+- Add expiration checking to the `validateToken()` function
+- Return 401 Unauthorized for expired tokens
 
-## 対象ファイル
+## Target Files
 - `src/services/auth.ts` (L45-L60)
 - `src/middleware/auth.middleware.ts` (L12)
 
-## 優先度
+## Priority
 🔴 High
 ```
 
 > [!TIP]
-> 生成された Issue には自動的に `ados` ラベルが付与されるため、AutoPilot モードと組み合わせると、提案から実装まで完全自動化できます。
+> Generated issues are automatically labeled with `ados`, so when combined with AutoPilot mode, the entire flow from suggestion to implementation can be fully automated.

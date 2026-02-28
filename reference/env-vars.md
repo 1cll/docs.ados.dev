@@ -1,86 +1,86 @@
-# 環境変数リファレンス
+# Environment Variables Reference
 
-ADOS で使用する環境変数の一覧です。
+A list of environment variables used by ADOS.
 
-## ADOS コア
+## ADOS Core
 
-| 変数 | 必須 | デフォルト | 説明 |
-|------|-----|-----------|------|
-| `ADOS_API_URL` | ✅ | — | ADOS API サーバーの URL |
-| `ADOS_TOKEN` | ✅ | — | ADOS 認証トークン |
-| `ADOS_RUNNER_ID` | ✅ | — | Work Runner の一意な識別子 |
-| `WORKSPACE_DIR` | ✅ | — | ジョブの作業ディレクトリ |
-| `ADOS_MODE` | ❌ | `all` | 動作モード |
-| `ADOS_GROUP` | ❌ | `default` | Runner グループ名 |
-| `ADOS_CPUS` | ❌ | 自動検出 | 使用 CPU コア数 |
-| `ADOS_MEMORY` | ❌ | 自動検出 | メモリ上限 |
-| `ADOS_HOSTNAME` | ❌ | 自動検出 | ホスト名 |
-| `ADOS_TENANT_ID` | ❌ | — | テナント ID（マルチテナント時） |
+| Variable | Required | Default | Description |
+|----------|----------|---------|-------------|
+| `ADOS_API_URL` | ✅ | — | ADOS API server URL |
+| `ADOS_TOKEN` | ✅ | — | ADOS authentication token |
+| `ADOS_RUNNER_ID` | ✅ | — | Unique identifier for Work Runner |
+| `WORKSPACE_DIR` | ✅ | — | Job working directory |
+| `ADOS_MODE` | ❌ | `all` | Operating mode |
+| `ADOS_GROUP` | ❌ | `default` | Runner group name |
+| `ADOS_CPUS` | ❌ | Auto-detected | Number of CPU cores to use |
+| `ADOS_MEMORY` | ❌ | Auto-detected | Memory limit |
+| `ADOS_HOSTNAME` | ❌ | Auto-detected | Hostname |
+| `ADOS_TENANT_ID` | ❌ | — | Tenant ID (for multi-tenant setups) |
 
 ### ADOS_MODE
 
-| 値 | 説明 |
-|---|------|
-| `chat` | Agentic Chat モードのみ |
-| `issue` | Issue 処理モードのみ |
-| `all` | Chat + Issue 両方 |
+| Value | Description |
+|-------|-------------|
+| `chat` | Agentic Chat mode only |
+| `issue` | Issue processing mode only |
+| `all` | Both Chat + Issue |
 
-## VCS プロバイダ
+## VCS Providers
 
 ### GitHub
 
-| 変数 | 必須 | 説明 |
-|------|-----|------|
+| Variable | Required | Description |
+|----------|----------|-------------|
 | `GITHUB_TOKEN` | ✅ | GitHub Personal Access Token |
 
 ### GitLab
 
-| 変数 | 必須 | 説明 |
-|------|-----|------|
+| Variable | Required | Description |
+|----------|----------|-------------|
 | `GITLAB_TOKEN` | ✅ | GitLab Personal Access Token |
 
 ### Bitbucket
 
-| 変数 | 必須 | 説明 |
-|------|-----|------|
-| `BITBUCKET_USERNAME` | ✅ | Bitbucket ユーザー名 |
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `BITBUCKET_USERNAME` | ✅ | Bitbucket username |
 | `BITBUCKET_APP_PASSWORD` | ✅ | Bitbucket App Password |
 
-## AI エージェント
+## AI Agents
 
 ### Claude (Anthropic)
 
-| 変数 | 必須 | 説明 |
-|------|-----|------|
-| `ANTHROPIC_API_KEY` | ❌* | Anthropic API キー（`sk-ant-api03-...`） |
-| `CLAUDE_CODE_OAUTH_TOKEN` | ❌* | Claude MAX OAuth トークン（`sk-ant-oat01-...`） |
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `ANTHROPIC_API_KEY` | ❌* | Anthropic API key (`sk-ant-api03-...`) |
+| `CLAUDE_CODE_OAUTH_TOKEN` | ❌* | Claude MAX OAuth token (`sk-ant-oat01-...`) |
 
-> \* いずれか 1 つが必要
+> \* One of them is required
 
 ### OpenAI
 
-| 変数 | 必須 | 説明 |
-|------|-----|------|
-| `OPENAI_API_KEY` | ❌ | OpenAI API キー |
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `OPENAI_API_KEY` | ❌ | OpenAI API key |
 
-## GCP (SRE エージェント用)
+## GCP (For SRE Agent)
 
-| 変数 | 必須 | 説明 |
-|------|-----|------|
-| `GCP_PROJECT` | ❌ | GCP プロジェクト ID |
-| `GOOGLE_CLOUD_PROJECT` | ❌ | GCP プロジェクト ID（代替） |
-| `GOOGLE_APPLICATION_CREDENTIALS` | ❌ | サービスアカウントキーのパス |
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `GCP_PROJECT` | ❌ | GCP project ID |
+| `GOOGLE_CLOUD_PROJECT` | ❌ | GCP project ID (alternative) |
+| `GOOGLE_APPLICATION_CREDENTIALS` | ❌ | Service account key path |
 
-## 通知
+## Notifications
 
-| 変数 | 必須 | 説明 |
-|------|-----|------|
+| Variable | Required | Description |
+|----------|----------|-------------|
 | `SLACK_WEBHOOK_URL` | ❌ | Slack Incoming Webhook URL |
 | `DISCORD_WEBHOOK_URL` | ❌ | Discord Webhook URL |
 
-## 設定例
+## Configuration Examples
 
-### 最小構成
+### Minimal Configuration
 
 ```bash
 export ADOS_API_URL=https://api.ados.dev
@@ -90,10 +90,10 @@ export WORKSPACE_DIR=/workspace
 export GITHUB_TOKEN=ghp_xxxxxxxxxxxx
 ```
 
-### フル構成
+### Full Configuration
 
 ```bash
-# ADOS コア
+# ADOS Core
 export ADOS_API_URL=https://api.ados.dev
 export ADOS_TOKEN=your-ados-token
 export ADOS_RUNNER_ID=runner-001
@@ -106,21 +106,21 @@ export ADOS_MEMORY=8G
 # GitHub
 export GITHUB_TOKEN=ghp_xxxxxxxxxxxx
 
-# AI エージェント
+# AI Agents
 export ANTHROPIC_API_KEY=sk-ant-api03-xxxx
 export OPENAI_API_KEY=sk-xxxx
 
-# GCP (SRE エージェント用)
+# GCP (For SRE Agent)
 export GCP_PROJECT=my-project-id
 export GOOGLE_APPLICATION_CREDENTIALS=/path/to/service-account.json
 
-# 通知
+# Notifications
 export SLACK_WEBHOOK_URL=https://hooks.slack.com/services/xxx/xxx/xxx
 ```
 
-### .env ファイル
+### .env File
 
-Docker Compose では `.env` ファイルを使用できます：
+You can use a `.env` file with Docker Compose:
 
 ```env
 # .env
@@ -133,4 +133,4 @@ ANTHROPIC_API_KEY=sk-ant-api03-xxxx
 ```
 
 > [!WARNING]
-> `.env` ファイルは必ず `.gitignore` に追加してください。トークンやAPIキーのコミットを防止します。
+> Always add the `.env` file to `.gitignore`. This prevents accidentally committing tokens and API keys.

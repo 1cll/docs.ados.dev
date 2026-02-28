@@ -1,75 +1,75 @@
-# GitHub 連携
+# GitHub Integration
 
-ADOS は GitHub と 2 つの方法で連携できます。**GitHub App（推奨）** と **Personal Access Token (PAT)** です。
+ADOS supports two methods for connecting with GitHub: **GitHub App (recommended)** and **Personal Access Token (PAT)**.
 
-## 方法 1: GitHub App（推奨）
+## Method 1: GitHub App (Recommended)
 
-GitHub App を使うと、リポジトリ単位で細かい権限管理が可能です。
+Using a GitHub App enables fine-grained permission management per repository.
 
-### インストール手順
+### Installation Steps
 
-1. ダッシュボードの **Settings** → **GitHub 連携** に移動
-2. **GitHub App をインストール** をクリック
-3. GitHub のインストール画面で：
-   - 対象の組織またはユーザーアカウントを選択
-   - **すべてのリポジトリ** または **選択したリポジトリ** を指定
-4. **Install** をクリック
-5. ADOS ダッシュボードに自動リダイレクト
+1. Go to **Settings** → **GitHub Integration** in the dashboard
+2. Click **Install GitHub App**
+3. On the GitHub installation screen:
+   - Select the target organization or user account
+   - Choose **All repositories** or **Selected repositories**
+4. Click **Install**
+5. You'll be automatically redirected back to the ADOS dashboard
 
-### 必要な権限
+### Required Permissions
 
-GitHub App は以下の権限を要求します：
+The GitHub App requests the following permissions:
 
-| 権限 | レベル | 用途 |
-|------|--------|------|
-| **Issues** | Read & Write | Issue の読み取り・コメント |
-| **Pull requests** | Read & Write | PR の作成・更新 |
-| **Contents** | Read & Write | コードの読み取り・プッシュ |
-| **Actions** | Read | CI/CD ステータスの監視 |
-| **Metadata** | Read | リポジトリ情報の取得 |
+| Permission | Level | Purpose |
+|------------|-------|--------|
+| **Issues** | Read & Write | Read issues and post comments |
+| **Pull requests** | Read & Write | Create and update PRs |
+| **Contents** | Read & Write | Read code and push changes |
+| **Actions** | Read | Monitor CI/CD status |
+| **Metadata** | Read | Retrieve repository information |
 
-### Webhook 設定
+### Webhook Configuration
 
-GitHub App のインストール時に Webhook が自動設定されます。以下のイベントを受信します：
+Webhooks are automatically configured during GitHub App installation. The following events are received:
 
-- `issues` — Issue の作成・更新・ラベル変更
-- `issue_comment` — Issue コメントの追加
-- `pull_request` — PR のオープン・マージ・クローズ
-- `workflow_run` — GitHub Actions の実行結果
+- `issues` — Issue creation, updates, label changes
+- `issue_comment` — Issue comment additions
+- `pull_request` — PR open, merge, close
+- `workflow_run` — GitHub Actions run results
 
-## 方法 2: Personal Access Token (PAT)
+## Method 2: Personal Access Token (PAT)
 
-PAT を使えば、GitHub App をインストールせずに連携できます。
+Use a PAT to connect without installing a GitHub App.
 
-### トークンの作成
+### Creating a Token
 
-1. GitHub Settings → Developer settings → **Fine-grained tokens**
-2. **Generate new token** をクリック
-3. 以下の権限を付与：
+1. Go to GitHub Settings → Developer settings → **Fine-grained tokens**
+2. Click **Generate new token**
+3. Grant the following permissions:
    - `repo` (Full control)
    - `workflow` (Update GitHub Action workflows)
-4. トークンを生成してコピー
+4. Generate the token and copy it
 
-### ADOS に登録
+### Register in ADOS
 
-1. ダッシュボードの **Settings** → **GitHub 連携** に移動
-2. **Token** タブを選択
-3. トークンを貼り付けて **保存**
+1. Go to **Settings** → **GitHub Integration** in the dashboard
+2. Select the **Token** tab
+3. Paste the token and click **Save**
 
 > [!WARNING]
-> PAT は組織全リポジトリにアクセスできるため、GitHub App よりも権限が広くなります。可能であれば GitHub App の使用を推奨します。
+> PATs can access all repositories in the organization, making their scope broader than a GitHub App. We recommend using a GitHub App when possible.
 
-## 接続ステータスの確認
+## Checking Connection Status
 
-**Settings** → **GitHub 連携** ページで接続ステータスを確認できます：
+Check connection status on the **Settings** → **GitHub Integration** page:
 
-- 🟢 **接続済み** — 正常に連携中
-- 🟡 **トークン期限切れ** — トークンの更新が必要
-- 🔴 **未接続** — 設定が必要
+- 🟢 **Connected** — Integration is working normally
+- 🟡 **Token Expired** — Token needs to be refreshed
+- 🔴 **Not Connected** — Setup required
 
 ## GitHub Enterprise Server
 
-GitHub Enterprise Server（オンプレミス）にも対応しています。リポジトリ設定で `vcs_base_url` にカスタム URL を指定してください。
+GitHub Enterprise Server (on-premises) is also supported. Specify a custom URL via `vcs_base_url` in your repository settings.
 
 ```yaml
 repos:

@@ -1,10 +1,10 @@
-# REST API リファレンス
+# REST API Reference
 
-ADOS は RESTful API を提供しています。すべてのエンドポイントは認証が必要です。
+ADOS provides a RESTful API. All endpoints require authentication.
 
-## 認証
+## Authentication
 
-すべてのリクエストに Bearer トークンを含めてください：
+Include a Bearer token with every request:
 
 ```bash
 curl -H "Authorization: Bearer YOUR_ADOS_TOKEN" \
@@ -19,15 +19,15 @@ https://api.ados.dev/api
 
 ---
 
-## ダッシュボード
+## Dashboard
 
-### ダッシュボード情報を取得
+### Get Dashboard Info
 
 ```http
 GET /dashboard
 ```
 
-レスポンス:
+Response:
 ```json
 {
   "repos": [...],
@@ -39,15 +39,15 @@ GET /dashboard
 
 ---
 
-## ジョブ
+## Jobs
 
-### ジョブ一覧を取得
+### List Jobs
 
 ```http
 GET /jobs
 ```
 
-### ジョブ詳細を取得
+### Get Job Details
 
 ```http
 GET /jobs/{jobId}
@@ -55,21 +55,21 @@ GET /jobs/{jobId}
 
 ---
 
-## リポジトリ
+## Repositories
 
-### リポジトリ一覧を取得
+### List Repositories
 
 ```http
 GET /repos
 ```
 
-### リポジトリ設定を取得
+### Get Repository Settings
 
 ```http
 GET /settings/repos
 ```
 
-### リポジトリ設定を更新
+### Update Repository Settings
 
 ```http
 PUT /settings/repos
@@ -90,33 +90,33 @@ Content-Type: application/json
 
 ---
 
-## GitHub 連携
+## GitHub Integration
 
-### GitHub インストール一覧
+### List GitHub Installations
 
 ```http
 GET /settings/github/installations
 ```
 
-### インストール済みリポジトリ
+### List Installed Repositories
 
 ```http
 GET /settings/github/repos
 ```
 
-### copilot-instructions.md を取得
+### Get copilot-instructions.md
 
 ```http
 GET /github/{owner}/{repo}/instructions
 ```
 
-### Issue 一覧を取得
+### List Issues
 
 ```http
 GET /github/{owner}/{repo}/issues
 ```
 
-### Pull Request 一覧を取得
+### List Pull Requests
 
 ```http
 GET /github/{owner}/{repo}/pulls
@@ -124,21 +124,21 @@ GET /github/{owner}/{repo}/pulls
 
 ---
 
-## バックログ
+## Backlog
 
-### バックログを取得
+### Get Backlog
 
 ```http
 GET /github/{owner}/{repo}/backlog
 ```
 
-### バックログ生成を開始
+### Start Backlog Generation
 
 ```http
 POST /github/{owner}/{repo}/backlog/generate
 ```
 
-### バックログ生成ステータス
+### Backlog Generation Status
 
 ```http
 GET /github/{owner}/{repo}/backlog/status
@@ -146,9 +146,9 @@ GET /github/{owner}/{repo}/backlog/status
 
 ---
 
-## Issue 処理
+## Issue Processing
 
-### Issue の処理を送信
+### Submit Issue for Processing
 
 ```http
 POST /work/issues/submit
@@ -161,7 +161,7 @@ Content-Type: application/json
 }
 ```
 
-### Issue の処理状況を確認
+### Check Issue Processing Status
 
 ```http
 GET /work/issues/check?owner=my-org&repo=my-repo&issue=42
@@ -171,21 +171,21 @@ GET /work/issues/check?owner=my-org&repo=my-repo&issue=42
 
 ## Work Runner
 
-### WebSocket 接続
+### WebSocket Connection
 
 ```
 WSS /work/runners/ws
 ```
 
-Work Runner とのリアルタイム通信用 WebSocket エンドポイント。
+WebSocket endpoint for real-time communication with Work Runner.
 
-### Runner 一覧を取得
+### List Runners
 
 ```http
 GET /runners
 ```
 
-レスポンス:
+Response:
 ```json
 [
   {
@@ -199,9 +199,9 @@ GET /runners
 
 ---
 
-## ロック
+## Locks
 
-### アクティブなロック一覧
+### List Active Locks
 
 ```http
 GET /locks
@@ -209,9 +209,9 @@ GET /locks
 
 ---
 
-## ログ
+## Logs
 
-### ジョブログを取得
+### Get Job Logs
 
 ```http
 GET /logs/{jobId}
@@ -219,15 +219,15 @@ GET /logs/{jobId}
 
 ---
 
-## 利用状況
+## Usage
 
-### 利用統計を取得
+### Get Usage Statistics
 
 ```http
 GET /usage/stats
 ```
 
-### 月次利用量を取得
+### Get Monthly Usage
 
 ```http
 GET /usage/monthly
@@ -235,9 +235,9 @@ GET /usage/monthly
 
 ---
 
-## 予算
+## Budget
 
-### 予算情報を取得
+### Get Budget Info
 
 ```http
 GET /budget
@@ -245,33 +245,33 @@ GET /budget
 
 ---
 
-## 課金
+## Billing
 
-### 課金情報を取得
+### Get Billing Info
 
 ```http
 GET /billing/info
 ```
 
-### サブスクリプション管理
+### Subscription Management
 
 ```http
 GET /billing/portal
 ```
 
-Stripe カスタマーポータルへのリダイレクト URL を返します。
+Returns a redirect URL to the Stripe customer portal.
 
 ---
 
-## 接続
+## Connections
 
-### 接続一覧を取得
+### List Connections
 
 ```http
 GET /connections
 ```
 
-### 接続を追加
+### Add Connection
 
 ```http
 POST /connections
@@ -285,9 +285,9 @@ Content-Type: application/json
 
 ---
 
-## Copilot モデル
+## Copilot Models
 
-### 利用可能なモデル一覧
+### List Available Models
 
 ```http
 GET /copilot/models
@@ -297,51 +297,51 @@ GET /copilot/models
 
 ## Webhook
 
-### GitHub Webhook 受信
+### Receive GitHub Webhook
 
 ```http
 POST /webhooks/github
 ```
 
-GitHub からの Webhook イベントを受信するエンドポイント。GitHub App のインストール時に自動設定されます。
+Endpoint for receiving webhook events from GitHub. Automatically configured when the GitHub App is installed.
 
 ---
 
-## エラーレスポンス
+## Error Responses
 
-すべてのエラーは以下の形式で返されます：
+All errors are returned in the following format:
 
 ```json
 {
   "error": {
     "code": "RATE_LIMITED",
-    "message": "リクエスト数の上限に達しました",
+    "message": "Rate limit exceeded",
     "retry_after": 60
   }
 }
 ```
 
-### ステータスコード
+### Status Codes
 
-| コード | 説明 |
-|--------|------|
-| `200` | 成功 |
-| `201` | 作成成功 |
-| `400` | リクエスト不正 |
-| `401` | 認証エラー |
-| `403` | 権限不足 |
-| `404` | リソースが見つからない |
-| `429` | レート制限 |
-| `500` | サーバーエラー |
+| Code | Description |
+|------|-------------|
+| `200` | Success |
+| `201` | Created |
+| `400` | Bad Request |
+| `401` | Unauthorized |
+| `403` | Forbidden |
+| `404` | Not Found |
+| `429` | Rate Limited |
+| `500` | Server Error |
 
-## レート制限
+## Rate Limits
 
-API にはレート制限が適用されます：
+Rate limits apply to the API:
 
-| プラン | リクエスト数 |
-|--------|------------|
+| Plan | Requests |
+|------|----------|
 | Free | 100 req/min |
 | Pro | 500 req/min |
 | Team | 2000 req/min |
 
-レート制限に達した場合、`429` ステータスと `retry_after` フィールドが返されます。
+When the rate limit is reached, a `429` status with a `retry_after` field is returned.

@@ -1,80 +1,80 @@
-# 設定ファイルリファレンス (ados.yaml)
+# Configuration File Reference (ados.yaml)
 
-ADOS の設定は `ados.yaml` ファイルで管理されます。ダッシュボードの Settings からも設定可能です。
+ADOS configuration is managed via the `ados.yaml` file. It can also be configured from the Settings page in the dashboard.
 
-## 完全な設定例
+## Complete Configuration Example
 
 ```yaml
-# ados.yaml - ADOS 設定ファイル
+# ados.yaml - ADOS Configuration File
 
-# リポジトリ設定
+# Repository settings
 repos:
-  - name: my-backend             # リポジトリの表示名
-    owner: my-org                 # GitHub オーナー（組織 or ユーザー）
-    repo: my-backend-api          # リポジトリ名
-    path: ""                      # モノレポ内のパス（空=ルート）
-    target_branch: main           # PR のベースブランチ
-    label: ados                   # トリガーラベル
-    poll_interval: 30s            # ポーリング間隔
-    default_agent: claude         # デフォルト AI エージェント
-    model: claude-sonnet-4      # 使用モデル
-    enable_fallback: true         # フォールバック有効
-    fallback_agents:              # フォールバック順序
+  - name: my-backend             # Display name
+    owner: my-org                 # GitHub owner (org or user)
+    repo: my-backend-api          # Repository name
+    path: ""                      # Path within monorepo (empty = root)
+    target_branch: main           # PR base branch
+    label: ados                   # Trigger label
+    poll_interval: 30s            # Polling interval
+    default_agent: claude         # Default AI agent
+    model: claude-sonnet-4      # Model to use
+    enable_fallback: true         # Enable fallback
+    fallback_agents:              # Fallback order
       - copilot
       - codex
-    execution_preference: cloud   # 実行環境（cloud / self-hosted）
-    work_runner_group: ""         # Runner グループ名
-    vcs_provider: github          # VCS（github / gitlab / bitbucket）
-    vcs_base_url: ""              # カスタム VCS URL
+    execution_preference: cloud   # Execution environment (cloud / self-hosted)
+    work_runner_group: ""         # Runner group name
+    vcs_provider: github          # VCS (github / gitlab / bitbucket)
+    vcs_base_url: ""              # Custom VCS URL
 
-    # ワーカー設定
+    # Worker settings
     workers:
       issue_watcher:
-        enabled: true             # Issue 監視の有効/無効
+        enabled: true             # Enable/disable Issue monitoring
       pipeline_watcher:
-        enabled: true             # パイプライン監視の有効/無効
+        enabled: true             # Enable/disable Pipeline monitoring
       scheduled_watcher:
-        enabled: false            # スケジュール Watcher
+        enabled: false            # Scheduled Watcher
       sre_agent:
-        enabled: true             # SRE エージェントの有効/無効
-        gcloud_projects:          # 監視する GCP プロジェクト
+        enabled: true             # Enable/disable SRE agent
+        gcloud_projects:          # GCP projects to monitor
           - my-gcp-project
-        error_threshold: 10       # エラー率閾値（/分）
-        latency_threshold_ms: 5000  # レイテンシ閾値（ミリ秒）
-        check_interval: 5m        # チェック間隔
-        cooldown_duration: 1h     # クールダウン期間
+        error_threshold: 10       # Error rate threshold (/min)
+        latency_threshold_ms: 5000  # Latency threshold (ms)
+        check_interval: 5m        # Check interval
+        cooldown_duration: 1h     # Cooldown period
       autopilot:
-        enabled: false            # AutoPilot の有効/無効
-        min_open_issues: 1        # 起動最小 Issue 数
-        max_per_cycle: 3          # サイクル最大処理数
-        max_per_day: 20           # 日次最大処理数
-        check_interval: 10m       # チェック間隔
-        cooldown: 30m             # サイクル間クールダウン
-        priority_filter:          # 優先度フィルタ
+        enabled: false            # Enable/disable AutoPilot
+        min_open_issues: 1        # Minimum open Issues to start
+        max_per_cycle: 3          # Max Issues per cycle
+        max_per_day: 20           # Max Issues per day
+        check_interval: 10m       # Check interval
+        cooldown: 30m             # Cooldown between cycles
+        priority_filter:          # Priority filter
           - high
           - medium
-        category_filter:          # カテゴリフィルタ
+        category_filter:          # Category filter
           - bug
           - feature
-        require_approval: false   # マージ前承認
-        model: ""                 # AutoPilot 用モデル
-        focus:                    # バックログのフォーカス
+        require_approval: false   # Require approval before merge
+        model: ""                 # Model for AutoPilot
+        focus:                    # Backlog focus areas
           - security
           - performance
 
-# エージェント設定
+# Agent settings
 agents:
-  max_concurrent: 5              # 最大同時実行数
-  per_repo_min: 1                # リポジトリ毎の最小
-  per_repo_max: 3                # リポジトリ毎の最大
-  lock_ttl: 30m                  # ロック TTL
-  definitions:                   # カスタムエージェント定義
+  max_concurrent: 5              # Max concurrent executions
+  per_repo_min: 1                # Min per repository
+  per_repo_max: 3                # Max per repository
+  lock_ttl: 30m                  # Lock TTL
+  definitions:                   # Custom agent definitions
     - name: claude-custom
       agent: claude
       model: claude-opus-4
-      description: "高難度タスク用"
+      description: "For high-difficulty tasks"
 
-# ルーティング設定
+# Routing settings
 routing:
   rules:
     - labels: ["security"]
@@ -89,85 +89,85 @@ routing:
     - copilot
 ```
 
-## セクション詳細
+## Section Details
 
 ### repos[]
 
-| フィールド | 型 | デフォルト | 説明 |
-|-----------|---|-----------|------|
-| `name` | string | 必須 | リポジトリの表示名 |
-| `owner` | string | 必須 | オーナー名 |
-| `repo` | string | 必須 | リポジトリ名 |
-| `path` | string | `""` | モノレポ内のパス |
-| `target_branch` | string | `"main"` | PR のベースブランチ |
-| `label` | string | `"ados"` | トリガーラベル |
-| `poll_interval` | duration | `"30s"` | ポーリング間隔 |
-| `default_agent` | string | `""` | デフォルトエージェント |
-| `model` | string | `""` | 使用モデル |
-| `enable_fallback` | bool | `true` | フォールバック有効 |
-| `fallback_agents` | []string | `[]` | フォールバック順序 |
-| `execution_preference` | string | `"cloud"` | 実行環境 |
-| `work_runner_group` | string | `""` | Runner グループ |
-| `vcs_provider` | string | `"github"` | VCS プロバイダ |
-| `vcs_base_url` | string | `""` | カスタム URL |
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `name` | string | Required | Display name |
+| `owner` | string | Required | Owner name |
+| `repo` | string | Required | Repository name |
+| `path` | string | `""` | Path within monorepo |
+| `target_branch` | string | `"main"` | PR base branch |
+| `label` | string | `"ados"` | Trigger label |
+| `poll_interval` | duration | `"30s"` | Polling interval |
+| `default_agent` | string | `""` | Default agent |
+| `model` | string | `""` | Model to use |
+| `enable_fallback` | bool | `true` | Enable fallback |
+| `fallback_agents` | []string | `[]` | Fallback order |
+| `execution_preference` | string | `"cloud"` | Execution environment |
+| `work_runner_group` | string | `""` | Runner group |
+| `vcs_provider` | string | `"github"` | VCS provider |
+| `vcs_base_url` | string | `""` | Custom URL |
 
 ### repos[].workers
 
-| フィールド | 型 | デフォルト | 説明 |
-|-----------|---|-----------|------|
-| `issue_watcher.enabled` | bool | `true` | Issue 監視 |
-| `pipeline_watcher.enabled` | bool | `false` | パイプライン監視 |
-| `scheduled_watcher.enabled` | bool | `false` | スケジュール監視 |
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `issue_watcher.enabled` | bool | `true` | Issue monitoring |
+| `pipeline_watcher.enabled` | bool | `false` | Pipeline monitoring |
+| `scheduled_watcher.enabled` | bool | `false` | Scheduled monitoring |
 
 ### repos[].workers.sre_agent
 
-| フィールド | 型 | デフォルト | 説明 |
-|-----------|---|-----------|------|
-| `enabled` | bool | `false` | SRE の有効/無効 |
-| `gcloud_projects` | []string | `[]` | GCP プロジェクト ID |
-| `error_threshold` | int | `10` | エラー率閾値 |
-| `latency_threshold_ms` | int | `5000` | レイテンシ閾値 |
-| `check_interval` | duration | `"5m"` | チェック間隔 |
-| `cooldown_duration` | duration | `"1h"` | クールダウン |
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `enabled` | bool | `false` | Enable/disable SRE |
+| `gcloud_projects` | []string | `[]` | GCP project IDs |
+| `error_threshold` | int | `10` | Error rate threshold |
+| `latency_threshold_ms` | int | `5000` | Latency threshold |
+| `check_interval` | duration | `"5m"` | Check interval |
+| `cooldown_duration` | duration | `"1h"` | Cooldown |
 
 ### repos[].workers.autopilot
 
-| フィールド | 型 | デフォルト | 説明 |
-|-----------|---|-----------|------|
-| `enabled` | bool | `false` | AutoPilot 有効/無効 |
-| `min_open_issues` | int | `1` | 起動最小 Issue 数 |
-| `max_per_cycle` | int | `5` | サイクル最大数 |
-| `max_per_day` | int | `50` | 日次最大数 |
-| `check_interval` | duration | `"10m"` | チェック間隔 |
-| `cooldown` | duration | `"30m"` | クールダウン |
-| `priority_filter` | []string | `["*"]` | 優先度フィルタ |
-| `category_filter` | []string | `["*"]` | カテゴリフィルタ |
-| `require_approval` | bool | `false` | 承認要否 |
-| `model` | string | `""` | モデル指定 |
-| `focus` | []string | `[]` | フォーカスエリア |
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `enabled` | bool | `false` | Enable/disable AutoPilot |
+| `min_open_issues` | int | `1` | Min open Issues to start |
+| `max_per_cycle` | int | `5` | Max per cycle |
+| `max_per_day` | int | `50` | Max per day |
+| `check_interval` | duration | `"10m"` | Check interval |
+| `cooldown` | duration | `"30m"` | Cooldown |
+| `priority_filter` | []string | `["*"]` | Priority filter |
+| `category_filter` | []string | `["*"]` | Category filter |
+| `require_approval` | bool | `false` | Require approval |
+| `model` | string | `""` | Model |
+| `focus` | []string | `[]` | Focus areas |
 
 ### agents
 
-| フィールド | 型 | デフォルト | 説明 |
-|-----------|---|-----------|------|
-| `max_concurrent` | int | `5` | 全体の最大同時実行数 |
-| `per_repo_min` | int | `1` | リポジトリあたり最小 |
-| `per_repo_max` | int | `3` | リポジトリあたり最大 |
-| `lock_ttl` | duration | `"30m"` | ロック有効期間 |
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `max_concurrent` | int | `5` | Global max concurrent executions |
+| `per_repo_min` | int | `1` | Min per repository |
+| `per_repo_max` | int | `3` | Max per repository |
+| `lock_ttl` | duration | `"30m"` | Lock TTL |
 
 ### routing
 
-| フィールド | 型 | 説明 |
-|-----------|---|------|
-| `rules[].labels` | []string | マッチするラベル |
-| `rules[].keywords` | []string | マッチするキーワード |
-| `rules[].agent` | string | 使用するエージェント |
-| `rules[].model` | string | 使用するモデル |
-| `fallback` | []string | ルール不一致時のフォールバック |
+| Field | Type | Description |
+|-------|------|-------------|
+| `rules[].labels` | []string | Labels to match |
+| `rules[].keywords` | []string | Keywords to match |
+| `rules[].agent` | string | Agent to use |
+| `rules[].model` | string | Model to use |
+| `fallback` | []string | Fallback when no rules match |
 
-## 設定の検証
+## Validating Configuration
 
-CLI で設定ファイルの構文を検証できます：
+You can validate the configuration file syntax using the CLI:
 
 ```bash
 ados config validate --config ados.yaml

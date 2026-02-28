@@ -1,131 +1,122 @@
-# Issue 自動化
+# Issue Automation
 
-ADOS の中核機能です。GitHub / GitLab / Bitbucket の Issue を AI が自動で解決し、Pull Request を作成します。
+This is the core feature of ADOS. AI automatically resolves GitHub / GitLab / Bitbucket issues and creates Pull Requests.
 
-## 仕組み
+## How It Works
 
 ```
-┌────────────┐     ┌─────────────┐     ┌──────────────┐     ┌──────────────┐
-│  Issue 作成  │ ──▶ │  ADOS 検知   │ ──▶ │  AI で実装    │ ──▶ │  PR 作成     │
-│  (ラベル付き) │     │  (Watcher)  │     │  (Agent)     │     │  (自動)      │
-└────────────┘     └─────────────┘     └──────────────┘     └──────────────┘
+┌──────────────┐     ┌─────────────┐     ┌──────────────┐     ┌──────────────┐
+│  Issue Created │ ──▶ │  ADOS        │ ──▶ │  AI           │ ──▶ │  PR Created  │
+│  (with label)  │     │  Detection   │     │  Implements   │     │  (auto)      │
+└──────────────┘     └─────────────┘     └──────────────┘     └──────────────┘
 ```
 
 ## Issue Watcher
 
-Issue Watcher は指定されたラベルを持つ Issue を自動検知します。
+Issue Watcher automatically detects issues with specified labels.
 
-### ラベルの設定
+### Label Configuration
 
 ```yaml
 repos:
   - name: my-repo
     owner: my-org
     repo: my-repo
-    label: ados          # このラベルが付いた Issue を処理
-    target_branch: main  # PR のベースブランチ
+    label: ados          # Process issues with this label
+    target_branch: main  # Base branch for PRs
 ```
 
 > [!TIP]
-> ラベルは任意の文字列を設定できます。デフォルトは `ados` です。
+> The label can be any string. The default is `ados`.
 
-### 監視間隔
+### Polling Interval
 
 ```yaml
 repos:
   - name: my-repo
-    poll_interval: 30s   # 30秒ごとに Issue をチェック
+    poll_interval: 30s   # Check for issues every 30 seconds
     workers:
       issue_watcher:
         enabled: true
 ```
 
-## Issue の書き方
+## Writing Good Issues
 
-AI が正確に実装するために、Issue には以下を明記してください：
+To help the AI implement accurately, include the following in your issues:
 
-### 良い Issue の例
+### Good Issue Example
 
 ```markdown
-## タイトル
-ユーザー登録 API にメールバリデーションを追加
+## Title
+Add email validation to the user registration API
 
-## 説明
-- `POST /api/users` のリクエストボディで `email` フィールドのバリデーションを追加
-- RFC 5322 に準拠したメールアドレスのみ受け付ける
-- 不正なメールの場合は 400 Bad Request を返す
+## Description
+- Add validation for the `email` field in the `POST /api/users` request body
+- Only accept email addresses compliant with RFC 5322
+- Return 400 Bad Request for invalid emails
 
-## 受け入れ基準
-- [x] メールバリデーションが追加されている
-- [x] テストケースが追加されている
-- [x] 既存のテストが通る
+## Acceptance Criteria
+- [x] Email validation is implemented
+- [x] Test cases are added
+- [x] Existing tests pass
 ```
 
-### 悪い Issue の例
+### Bad Issue Example
 
 ```markdown
-メール周りを直して
+Fix the email stuff
 ```
 
 > [!WARNING]
-> 曖昧な Issue は AI の実装品質に直接影響します。 具体的な要件と受け入れ基準を書くことを推奨します。
+> Vague issues directly impact AI implementation quality. We recommend writing specific requirements and acceptance criteria.
 
-## Issue の複雑度分類
+## Issue Complexity Classification
 
-ADOS は Issue の内容を解析し、自動的に複雑度を分類します：
+ADOS analyzes issue content and automatically classifies complexity:
 
-| 複雑度 | 特徴 | 処理時間目安 |
-|--------|------|-------------|
-| **Simple** | 1 ファイルの変更、タイポ修正 | 1-3 分 |
-| **Medium** | 複数ファイル、新機能追加 | 3-10 分 |
-| **Complex** | アーキテクチャ変更、大規模修正 | 10-30 分 |
+| Complexity | Characteristics | Estimated Time |
+|------------|----------------|----------------|
+| **Simple** | Single file change, typo fix | 1-3 min |
+| **Medium** | Multiple files, new feature | 3-10 min |
+| **Complex** | Architecture change, major refactor | 10-30 min |
 
-## 処理フロー詳細
+## Processing Flow
 
-### 1. Issue 検知
-- Watcher が定期的に Issue をポーリング
-- 指定ラベルが付いた未処理の Issue を取得
-- Webhook 経由でもリアルタイム検知可能
+### 1. Issue Detection
+- Watcher periodically polls for issues
+- Retrieves unprocessed issues with the specified label
+- Can also detect in real time via webhooks
 
-### 2. コンテキスト収集
-- リポジトリのコード構造を分析
-- `copilot-instructions.md` や `.ados.yaml` を読み取り
-- 既存のテスト・ドキュメントパターンを把握
+### 2. Context Collection
+- Analyzes the repository's code structure
+- Reads `copilot-instructions.md` and `.ados.yaml`
+- Identifies existing test and documentation patterns
 
-### 3. AI による実装
-- 選択されたエージェント（Copilot / Claude / Codex）がコードを生成
-- テストの作成・実行
-- コーディング規約の遵守
+### 3. AI Implementation
+- The selected agent (Copilot / Claude / Codex) generates code
+- Creates and runs tests
+- Follows coding conventions
 
-### 4. PR 作成
-- ブランチを作成（`ados/issue-{number}`）
-- 変更をコミット & プッシュ
-- PR を作成し、Issue にリンク
-- AI による PR 説明文を自動生成
+### 4. PR Creation
+- Creates a branch (`ados/issue-{number}`)
+- Commits and pushes changes
+- Creates a PR linked to the issue
+- Auto-generates a PR description
 
-### 5. フィードバックループ
-- CI/CD の結果を監視
-- テスト失敗時は自動修復を試行
-- Issue にステータスコメントを投稿
+### 5. Feedback Loop
+- Monitors CI/CD results
+- Attempts auto-repair on test failures
+- Posts status comments on the issue
 
-## ステータス管理
+## Status Tracking
 
-Issue の処理状況は以下のステータスでトラッキングされます：
+Issue processing is tracked with the following statuses:
 
-| ステータス | 説明 |
-|-----------|------|
-| `queued` | 処理待ち |
-| `in_progress` | AI が実装中 |
-| `pr_created` | PR が作成済み |
-| `ci_fixing` | CI 失敗の自動修復中 |
-| `completed` | マージ済みで完了 |
-| `failed` | 処理に失敗 |
-
-## ロック機構
-
-同じ Issue が複数回処理されないよう、分散ロック機構を使用しています：
-
-```yaml
-agents:
-  lock_ttl: 30m   # ロックの有効期間（デフォルト: 30分）
-```
+| Status | Description |
+|--------|-------------|
+| `queued` | Waiting to be processed |
+| `in_progress` | AI is implementing |
+| `pr_created` | PR has been created |
+| `ci_fixing` | Auto-repairing CI failures |
+| `completed` | Merged and complete |
+| `failed` | Processing failed |

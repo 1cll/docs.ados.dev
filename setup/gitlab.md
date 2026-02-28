@@ -1,30 +1,30 @@
-# GitLab 連携
+# GitLab Integration
 
-ADOS は GitLab.com および GitLab Self-Managed に対応しています。
+ADOS supports both GitLab.com and GitLab Self-Managed.
 
-## セットアップ
+## Setup
 
-### 1. Personal Access Token の作成
+### 1. Create a Personal Access Token
 
-1. GitLab → User Settings → **Access Tokens**
-2. **Add new token** をクリック
-3. 以下のスコープを選択：
-   - `api` — フル API アクセス
-   - `read_repository` — リポジトリの読み取り
-   - `write_repository` — リポジトリへの書き込み
-4. トークンを生成してコピー
+1. Go to GitLab → User Settings → **Access Tokens**
+2. Click **Add new token**
+3. Select the following scopes:
+   - `api` — Full API access
+   - `read_repository` — Repository read access
+   - `write_repository` — Repository write access
+4. Generate and copy the token
 
-### 2. ADOS に登録
+### 2. Register in ADOS
 
-1. ダッシュボードの **Settings** → **Connections** に移動
-2. **新しい接続を追加** → **GitLab** を選択
-3. 以下を入力：
-   - **接続名**: 任意の名前（例: `gitlab-production`）
-   - **Token**: 生成した PAT
-   - **Base URL**: `https://gitlab.com`（Self-Managed の場合はカスタム URL）
-4. **保存**
+1. Go to **Settings** → **Connections** in the dashboard
+2. Click **Add New Connection** → Select **GitLab**
+3. Enter the following:
+   - **Connection Name**: Any name (e.g., `gitlab-production`)
+   - **Token**: The generated PAT
+   - **Base URL**: `https://gitlab.com` (or your custom URL for Self-Managed)
+4. Click **Save**
 
-### 3. リポジトリを登録
+### 3. Register a Repository
 
 ```yaml
 repos:
@@ -38,7 +38,7 @@ repos:
 
 ## GitLab Self-Managed
 
-オンプレミスの GitLab にも対応しています：
+On-premises GitLab is also supported:
 
 ```yaml
 repos:
@@ -49,13 +49,13 @@ repos:
     vcs_base_url: https://gitlab.my-company.com
 ```
 
-## 対応イベント
+## Supported Events
 
-| イベント | 説明 |
-|---------|------|
-| Issue 作成 | ラベル付き Issue を自動検知 |
-| Merge Request | AI が生成した MR のステータス追跡 |
-| Pipeline | CI/CD パイプラインの監視・自動修復 |
+| Event | Description |
+|-------|-------------|
+| Issue Created | Auto-detects labeled issues |
+| Merge Request | Tracks status of AI-generated MRs |
+| Pipeline | Monitors and auto-repairs CI/CD pipelines |
 
 > [!TIP]
-> GitLab では「Pull Request」の代わりに「Merge Request」が使われます。ADOS はどちらの用語でも同じ機能を提供します。
+> GitLab uses "Merge Request" instead of "Pull Request". ADOS provides the same functionality regardless of terminology.

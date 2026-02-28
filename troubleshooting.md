@@ -1,127 +1,127 @@
-# トラブルシューティング
+# Troubleshooting
 
-よくある問題と解決方法をまとめています。
+Common issues and their solutions.
 
-## Issue が処理されない
+## Issues Not Being Processed
 
-### ラベルを確認
-Issue に正しいラベルが付いているか確認してください。デフォルトは `ados` です。
+### Check the Label
+Verify that the correct label is attached to the issue. The default is `ados`.
 
 ```yaml
 repos:
   - name: my-repo
-    label: ados    # このラベルが付いた Issue のみ処理
+    label: ados    # Only issues with this label are processed
 ```
 
-### Watcher の状態を確認
-ダッシュボードの **Settings** → **Repos** で Issue Watcher が有効か確認してください。
+### Check the Watcher Status
+In the dashboard, go to **Settings** → **Repos** and verify that Issue Watcher is enabled.
 
 ```yaml
 workers:
   issue_watcher:
-    enabled: true   # true になっているか確認
+    enabled: true   # Make sure this is true
 ```
 
-### ログを確認
-ダッシュボードの **Logs** タブで詳細なエラーログを確認できます。
+### Check the Logs
+Review detailed error logs in the **Logs** tab of the dashboard.
 
 ---
 
-## PR が作成されない
+## PR Not Being Created
 
-### ブランチの競合
-同名のブランチが既に存在する場合、PR の作成に失敗することがあります。
+### Branch Conflict
+PR creation may fail if a branch with the same name already exists.
 
-**解決策:** GitHub で `ados/issue-{number}` ブランチを手動で削除してください。
+**Solution:** Manually delete the `ados/issue-{number}` branch on GitHub.
 
-### 権限エラー
-GitHub App またはトークンにリポジトリへの書き込み権限がない場合、PR が作成されません。
+### Permission Error
+PRs cannot be created if the GitHub App or token lacks write permission to the repository.
 
-**解決策:** GitHub App の権限を確認するか、PAT のスコープに `repo` が含まれているか確認してください。
-
----
-
-## AI の実装品質が低い
-
-### copilot-instructions.md を改善
-
-AI の出力品質は `copilot-instructions.md` の内容に大きく依存します。
-
-**解決策:**
-1. プロジェクトの技術スタック、コーディング規約を明記
-2. ファイル構造とアーキテクチャを説明
-3. いくつかの具体例を含める
-4. 禁止事項（NG パターン）を列挙
-
-→ 詳細は [copilot-instructions.md の書き方](guides/writing-instructions.md) を参照
-
-### Issue の記述を改善
-
-曖昧な Issue は曖昧な実装になります。
-
-**解決策:**
-- 具体的な要件を記述
-- 受け入れ基準を明記
-- 対象ファイルやコードを参照
-
-→ 詳細は [Issue 自動化](guides/issue-automation.md) の「Issue の書き方」を参照
-
-### エージェントを変更
-
-タスクに適した AI エージェントを使用してください。
-
-| 課題 | 推奨 |
-|-----|------|
-| 単純な修正 | Copilot |
-| 新機能実装 | Claude |
-| 複雑なリファクタ | Claude (opus) |
+**Solution:** Verify the GitHub App permissions or check that the PAT scope includes `repo`.
 
 ---
 
-## CI/CD の自動修復が機能しない
+## Low AI Implementation Quality
 
-### Pipeline Watcher の有効化
+### Improve copilot-instructions.md
+
+AI output quality heavily depends on the content of `copilot-instructions.md`.
+
+**Solution:**
+1. Clearly specify the project’s tech stack and coding conventions
+2. Describe the file structure and architecture
+3. Include concrete examples
+4. List prohibited patterns
+
+→ See [Writing copilot-instructions.md](guides/writing-instructions.md) for details
+
+### Improve Issue Descriptions
+
+Vague issues result in vague implementations.
+
+**Solution:**
+- Write specific requirements
+- Define acceptance criteria
+- Reference relevant files and code
+
+→ See the "Writing Good Issues" section in [Issue Automation](guides/issue-automation.md)
+
+### Change the Agent
+
+Use the AI agent best suited for the task.
+
+| Problem | Recommended |
+|---------|-------------|
+| Simple fix | Copilot |
+| New feature | Claude |
+| Complex refactor | Claude (opus) |
+
+---
+
+## CI/CD Auto-Repair Not Working
+
+### Enable Pipeline Watcher
 
 ```yaml
 workers:
   pipeline_watcher:
-    enabled: true   # true になっているか確認
+    enabled: true   # Make sure this is true
 ```
 
-### CI ログのアクセス権
+### CI Log Access
 
-Pipeline Watcher は CI ログを取得する必要があります。GitHub Actions の場合、`actions: read` 権限が必要です。
+Pipeline Watcher needs access to CI logs. For GitHub Actions, the `actions: read` permission is required.
 
 ---
 
-## Work Runner が接続できない
+## Work Runner Cannot Connect
 
-### 環境変数の確認
+### Check Environment Variables
 
-必須の環境変数がすべて設定されているか確認してください：
+Verify that all required environment variables are set:
 
 ```bash
-echo $ADOS_API_URL      # 空でないか確認
-echo $ADOS_TOKEN         # 空でないか確認
-echo $ADOS_RUNNER_ID     # 空でないか確認
-echo $WORKSPACE_DIR      # 空でないか確認
+echo $ADOS_API_URL      # Should not be empty
+echo $ADOS_TOKEN         # Should not be empty
+echo $ADOS_RUNNER_ID     # Should not be empty
+echo $WORKSPACE_DIR      # Should not be empty
 ```
 
-### ネットワーク接続
+### Network Connectivity
 
-Work Runner は以下のエンドポイントに接続する必要があります：
+Work Runner needs to connect to the following endpoints:
 
-| エンドポイント | プロトコル | 用途 |
-|--------------|----------|------|
-| `api.ados.dev` | HTTPS (443) | API 通信 |
-| `api.ados.dev` | WSS (443) | WebSocket 通信 |
+| Endpoint | Protocol | Purpose |
+|----------|----------|---------|
+| `api.ados.dev` | HTTPS (443) | API communication |
+| `api.ados.dev` | WSS (443) | WebSocket communication |
 | `github.com` | HTTPS (443) | GitHub API |
 
-ファイアウォールでこれらのドメインがブロックされていないか確認してください。
+Ensure these domains are not blocked by your firewall.
 
 ### Docker Socket
 
-`docker.sock` が正しくマウントされているか確認：
+Verify that `docker.sock` is properly mounted:
 
 ```bash
 docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
@@ -130,52 +130,51 @@ docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
 
 ---
 
-## レート制限に引っかかる
+## Hitting Rate Limits
 
-### GitHub API のレート制限
+### GitHub API Rate Limits
 
-GitHub API のレート制限（5,000 req/hour for PAT）に達している可能性があります。
+You may be hitting GitHub API rate limits (5,000 req/hour for PAT).
 
-**解決策:**
-- `poll_interval` を長くする（例: `30s` → `60s`）
-- GitHub App を使用する（レート制限が緩い）
+**Solution:**
+- Increase `poll_interval` (e.g., `30s` → `60s`)
+- Use a GitHub App (higher rate limits)
 
-### ADOS API のレート制限
+### ADOS API Rate Limits
 
-| プラン | レート制限 |
-|--------|----------|
+| Plan | Rate Limit |
+|------|------------|
 | Free | 100 req/min |
 | Pro | 500 req/min |
 | Team | 2000 req/min |
 
-**解決策:** プランのアップグレードを検討してください。
+**Solution:** Consider upgrading your plan.
 
 ---
 
-## SRE エージェントがアラートを出さない
+## SRE Agent Not Firing Alerts
 
-### GCP 認証の確認
+### Check GCP Authentication
 
 ```bash
 gcloud auth application-default login
 gcloud config set project YOUR_PROJECT_ID
 ```
 
-### 閾値の確認
+### Check Thresholds
 
-閾値が高すぎる可能性があります：
+Your thresholds may be set too high:
 
 ```yaml
 sre_agent:
-  error_threshold: 10         # この値を下げてみる
-  latency_threshold_ms: 5000  # この値を下げてみる
+  error_threshold: 10         # Try lowering this value
+  latency_threshold_ms: 5000  # Try lowering this value
 ```
 
 ---
 
-## それでも解決しない場合
+## Still Not Resolved?
 
-1. **ログの確認**: ダッシュボードの Logs タブで詳細ログを確認
-2. **ドキュメントの検索**: このドキュメントサイトで検索バーを使用
-3. **GitHub Issues**: [ADOS GitHub リポジトリ](https://github.com/1cll/ADOS/issues) で Issue を作成
-4. **サポート**: Team プランの方は専用サポートチャンネルをご利用ください
+1. **Check Logs**: Review detailed logs in the Logs tab of the dashboard
+2. **Search Documentation**: Use the search bar on this documentation site
+3. **Support**: Team plan users have access to a dedicated support channel

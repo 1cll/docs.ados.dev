@@ -1,95 +1,95 @@
-# 料金プラン
+# Pricing Plans
 
-ADOS は 3 つのプランを提供しています。
+ADOS offers 3 plans.
 
-## プラン比較
+## Plan Comparison
 
 | | Free | Pro | Team |
 |---|:---:|:---:|:---:|
-| **月額** | ¥0 | ¥4,980/月 | ¥14,980/席/月 |
-| **リポジトリ数** | 1 | 5 | 無制限 |
-| **Issue 処理数/月** | 20 | 無制限 | 無制限 |
-| **AI エージェント** | Copilot | Copilot, Claude, Codex | Copilot, Claude, Codex |
-| **Issue 自動化** | ✅ | ✅ | ✅ |
-| **パイプライン監視** | ❌ | ✅ | ✅ |
-| **SRE エージェント** | ❌ | ✅ | ✅ |
+| **Monthly Price** | $0 | $29/mo | $99/seat/mo |
+| **Repositories** | 1 | 5 | Unlimited |
+| **Issues Processed/mo** | 20 | Unlimited | Unlimited |
+| **AI Agents** | Copilot | Copilot, Claude, Codex | Copilot, Claude, Codex |
+| **Issue Automation** | ✅ | ✅ | ✅ |
+| **Pipeline Watcher** | ❌ | ✅ | ✅ |
+| **SRE Agent** | ❌ | ✅ | ✅ |
 | **AutoPilot** | ❌ | ✅ | ✅ |
-| **AI バックログ** | ❌ | ✅ | ✅ |
+| **AI Backlog** | ❌ | ✅ | ✅ |
 | **Agentic Chat** | ❌ | ✅ | ✅ |
-| **ワークフロー** | ❌ | ✅ | ✅ |
-| **セルフホスト Runner** | ❌ | ✅ | ✅ |
-| **優先サポート** | ❌ | ❌ | ✅ |
+| **Workflows** | ❌ | ✅ | ✅ |
+| **Self-Hosted Runner** | ❌ | ✅ | ✅ |
+| **Priority Support** | ❌ | ❌ | ✅ |
 | **SLA** | ❌ | ❌ | 99.9% |
-| **監査ログ** | ❌ | ❌ | ✅ |
+| **Audit Logs** | ❌ | ❌ | ✅ |
 | **SSO / SAML** | ❌ | ❌ | ✅ |
 
-## Free プラン
+## Free Plan
 
-個人開発者やお試し利用に最適です。
+Ideal for individual developers and trial use.
 
-- 1 リポジトリまで
-- 月 20 Issue まで処理可能
-- GitHub Copilot エージェントのみ
-- クレジットカード不要
+- Up to 1 repository
+- Process up to 20 Issues per month
+- GitHub Copilot agent only
+- No credit card required
 
-## Pro プラン
+## Pro Plan
 
-本格的な開発チームの生産性を最大化します。
+Maximize productivity for serious development teams.
 
-- 5 リポジトリまで
-- 無制限の Issue 処理
-- 全 AI エージェント（Copilot, Claude, Codex）
-- パイプライン監視 & 自動修復
-- SRE エージェント
-- AutoPilot モード
-- AI バックログ生成
+- Up to 5 repositories
+- Unlimited Issue processing
+- All AI agents (Copilot, Claude, Codex)
+- Pipeline monitoring & auto-repair
+- SRE Agent
+- AutoPilot mode
+- AI Backlog generation
 - Agentic Chat
-- ワークフローエディタ
-- セルフホスト Runner
+- Workflow editor
+- Self-hosted Runner
 
-## Team プラン
+## Team Plan
 
-組織全体での利用に最適な、エンタープライズ向けプランです。
+An enterprise-grade plan best suited for organization-wide adoption.
 
-- 無制限のリポジトリ
-- 複数メンバー管理
-- 優先サポート
+- Unlimited repositories
+- Multi-member management
+- Priority support
 - 99.9% SLA
-- 監査ログ
-- SSO / SAML 対応
-- カスタムルーティングルール
-- 専用サポートチャンネル
+- Audit logs
+- SSO / SAML support
+- Custom routing rules
+- Dedicated support channel
 
-## 課金について
+## Billing
 
-### 支払い方法
-- クレジットカード（Visa, Mastercard, AMEX）
-- Stripe 経由の安全な決済
+### Payment Methods
+- Credit card (Visa, Mastercard, AMEX)
+- Secure payments via Stripe
 
-### 課金サイクル
-- 月額課金
-- 月初に請求
+### Billing Cycle
+- Monthly billing
+- Charged at the beginning of each month
 
-### プラン変更
-- ダッシュボードの **Settings** → **Billing** からいつでも変更可能
-- アップグレード：即時反映
-- ダウングレード：次の課金サイクルから反映
+### Changing Plans
+- Change anytime from **Settings** → **Billing** in the dashboard
+- Upgrades: Take effect immediately
+- Downgrades: Take effect at the start of the next billing cycle
 
-### 解約
-- いつでも解約可能
-- 解約後も課金期間の終了まで利用可能
-- データは解約後 30 日間保持
+### Cancellation
+- Cancel anytime
+- Access continues until the end of the current billing period
+- Data is retained for 30 days after cancellation
 
-## よくある質問
+## FAQ
 
-### Q: API キーの費用は別途かかりますか？
-**A:** はい。Claude（Anthropic）や Codex（OpenAI）を使う場合、各社の API 利用料が別途かかります。GitHub Copilot は GitHub のサブスクリプションに含まれます。
+### Q: Are API key costs charged separately?
+**A:** Yes. If you use Claude (Anthropic) or Codex (OpenAI), their API usage fees apply separately. GitHub Copilot is included in your GitHub subscription.
 
-### Q: 無料プランから始めてアップグレードできますか？
-**A:** はい。Free プランで始めて、いつでも Pro や Team にアップグレードできます。
+### Q: Can I start with the Free plan and upgrade later?
+**A:** Yes. Start with the Free plan and upgrade to Pro or Team at any time.
 
-### Q: Team プランのシート数に制限はありますか？
-**A:** 制限はありません。必要な人数分のシートを購入できます。
+### Q: Is there a limit on the number of seats for the Team plan?
+**A:** No. You can purchase as many seats as you need.
 
-### Q: 年額プランはありますか？
-**A:** 現在準備中です。年額プランでは約 20% の割引を予定しています。
+### Q: Is an annual plan available?
+**A:** Coming soon. We plan to offer approximately 20% off with annual billing.

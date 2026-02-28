@@ -1,92 +1,92 @@
-# 通知設定
+# Notification Settings
 
-ADOS は処理の進捗や結果を Slack / Discord / メール で通知できます。
+ADOS can send progress and result notifications via Slack, Discord, or Email.
 
-## 対応チャンネル
+## Supported Channels
 
-| チャンネル | 設定方法 |
-|-----------|---------|
+| Channel | Configuration |
+|---------|--------------|
 | **Slack** | Webhook URL |
 | **Discord** | Webhook URL |
-| **Email** | メールアドレス |
+| **Email** | Email address |
 
-## Slack 連携
+## Slack Integration
 
-### 1. Incoming Webhook の作成
+### 1. Create an Incoming Webhook
 
-1. [Slack API](https://api.slack.com/apps) で新しいアプリを作成
-2. **Incoming Webhooks** を有効化
-3. **Add New Webhook to Workspace** でチャンネルを選択
-4. Webhook URL をコピー
+1. Create a new app at [Slack API](https://api.slack.com/apps)
+2. Enable **Incoming Webhooks**
+3. Click **Add New Webhook to Workspace** and select a channel
+4. Copy the Webhook URL
 
-### 2. ADOS に登録
+### 2. Register in ADOS
 
-1. ダッシュボードの **Settings** → **Notifications** に移動
-2. **Slack** タブを選択
-3. Webhook URL を貼り付け
-4. **テスト通知を送信** で確認
-5. **保存**
+1. Go to **Settings** → **Notifications** in the dashboard
+2. Select the **Slack** tab
+3. Paste the Webhook URL
+4. Click **Send Test Notification** to verify
+5. Click **Save**
 
-### 通知の例
-
-```
-🚀 ADOS | Issue #42 を処理中
-リポジトリ: my-org/my-repo
-タイトル: ログイン API にレートリミットを追加
-エージェント: Claude (claude-sonnet-4)
-ステータス: 実装中...
-```
+### Notification Examples
 
 ```
-✅ ADOS | PR を作成しました
-リポジトリ: my-org/my-repo
-PR #123: ログイン API にレートリミットを追加
-変更ファイル: 3 files (+45 -12)
-レビューする → https://github.com/my-org/my-repo/pull/123
+🚀 ADOS | Processing Issue #42
+Repository: my-org/my-repo
+Title: Add rate limiting to the login API
+Agent: Claude (claude-sonnet-4)
+Status: Implementing...
 ```
 
-## Discord 連携
+```
+✅ ADOS | PR Created
+Repository: my-org/my-repo
+PR #123: Add rate limiting to the login API
+Changed files: 3 files (+45 -12)
+Review → https://github.com/my-org/my-repo/pull/123
+```
 
-### 1. Webhook の作成
+## Discord Integration
 
-1. Discord サーバー設定 → **連携サービス** → **ウェブフック**
-2. **新しいウェブフック** をクリック
-3. チャンネルを選択
-4. **ウェブフック URL をコピー**
+### 1. Create a Webhook
 
-### 2. ADOS に登録
+1. Discord Server Settings → **Integrations** → **Webhooks**
+2. Click **New Webhook**
+3. Select a channel
+4. Click **Copy Webhook URL**
 
-1. ダッシュボードの **Settings** → **Notifications** に移動
-2. **Discord** タブを選択
-3. Webhook URL を貼り付け
-4. **保存**
+### 2. Register in ADOS
 
-## Email 通知
+1. Go to **Settings** → **Notifications** in the dashboard
+2. Select the **Discord** tab
+3. Paste the Webhook URL
+4. Click **Save**
 
-1. ダッシュボードの **Settings** → **Notifications** に移動
-2. **Email** タブを選択
-3. 通知先メールアドレスを追加
-4. **保存**
+## Email Notifications
 
-## 通知イベント
+1. Go to **Settings** → **Notifications** in the dashboard
+2. Select the **Email** tab
+3. Add the notification email address
+4. Click **Save**
 
-通知するイベントをカスタマイズできます：
+## Notification Events
 
-| イベント | デフォルト | 説明 |
-|---------|-----------|------|
-| Issue 処理開始 | ✅ | AI が Issue の処理を開始 |
-| PR 作成 | ✅ | PR が作成された |
-| CI 成功 | ❌ | CI/CD が成功した |
-| CI 失敗 | ✅ | CI/CD が失敗した |
-| 自動修復 | ✅ | Pipeline Watcher が修復を実行 |
-| SRE アラート | ✅ | SRE エージェントがアラートを発火 |
-| バックログ生成完了 | ❌ | AI バックログの生成が完了 |
-| エラー | ✅ | 処理中にエラーが発生 |
+Customize which events trigger notifications:
 
-## 通知の頻度制限
+| Event | Default | Description |
+|-------|---------|-------------|
+| Issue processing started | ✅ | AI started processing an issue |
+| PR created | ✅ | A PR was created |
+| CI success | ❌ | CI/CD succeeded |
+| CI failure | ✅ | CI/CD failed |
+| Auto-repair | ✅ | Pipeline Watcher performed a repair |
+| SRE alert | ✅ | SRE agent fired an alert |
+| Backlog generation complete | ❌ | AI backlog generation finished |
+| Error | ✅ | An error occurred during processing |
 
-大量の通知でチャンネルが埋もれないよう、頻度制限を設定できます：
+## Notification Frequency Control
 
-- **即時通知**: 重要なイベント（エラー、SRE アラート）
-- **バッチ通知**: 日次でまとめて通知
-- **通知なし**: 特定イベントの通知を無効化
+Prevent your channels from being flooded with notifications:
+
+- **Instant notifications**: Critical events (errors, SRE alerts)
+- **Batch notifications**: Daily digest
+- **No notifications**: Disable notifications for specific events

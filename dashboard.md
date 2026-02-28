@@ -1,70 +1,70 @@
-# ダッシュボード概要
+# Dashboard Overview
 
-ADOS ダッシュボードは Web ベースの管理画面で、すべての機能にアクセスできます。
+The ADOS Dashboard is a web-based management console that provides access to all features.
 
-## ページ一覧
+## Pages
 
-| ページ | 説明 |
-|--------|------|
-| **Dashboard** | ジョブ統計、成功率、トレンドチャート、リポジトリカード |
-| **Pull Requests** | AI が生成した PR の一覧、ステータス表示、マージ操作 |
-| **Monitor** | GitHub Actions ステータス、セキュリティアラート |
-| **Runners** | セルフホスト Runner の管理（Issue / Chat / Pipeline） |
-| **Usage** | AI トークン使用量、コスト見積もり |
-| **Feedback** | AI エージェントの品質フィードバック（PR マージ/リジェクト分析） |
-| **Logs** | サービスログの表示、検索、フィルタ |
-| **Settings** | リポジトリ設定、GitHub 連携、通知設定、課金管理 |
+| Page | Description |
+|------|-------------|
+| **Dashboard** | Job stats, success rates, trend charts, repository cards |
+| **Pull Requests** | List of AI-generated PRs, status display, merge actions |
+| **Monitor** | GitHub Actions status, security alerts |
+| **Runners** | Self-hosted Runner management (Issue / Chat / Pipeline) |
+| **Usage** | AI token usage, cost estimates |
+| **Feedback** | AI agent quality feedback (PR merge/reject analysis) |
+| **Logs** | Service log viewing, search, and filtering |
+| **Settings** | Repository settings, GitHub integration, notifications, billing |
 
-## Dashboard ページ
+## Dashboard Page
 
-メインのダッシュボードでは以下の情報が表示されます:
+The main dashboard displays the following information:
 
-- **リポジトリカード** — 各リポの Issue ステータス（Open / 実行待ち / 要対応）
-- **ジョブ統計** — 直近の処理件数、成功率
-- **トレンドチャート** — 日次/週次の処理推移
-- **エージェント別パフォーマンス** — Copilot / Claude / Codex の比較
+- **Repository Cards** — Issue status per repo (Open / Queued / Needs Attention)
+- **Job Stats** — Recent processing count and success rate
+- **Trend Charts** — Daily/weekly processing trends
+- **Agent Performance** — Comparison across Copilot / Claude / Codex
 
-## Pull Requests ページ
+## Pull Requests Page
 
-AI が作成した Pull Request を一覧表示します。
+Displays a list of AI-created Pull Requests.
 
-- **ステータス**: Open / Merged / Closed
-- **ワンクリックマージ**: ダッシュボードから直接 PR をマージ・スカッシュ
-- **差分プレビュー**: 変更内容の概要を表示
+- **Status**: Open / Merged / Closed
+- **One-Click Merge**: Merge or squash PRs directly from the dashboard
+- **Diff Preview**: Summary of changes
 
-## Usage ページ
+## Usage Page
 
-AI エージェントのトークン使用量とコストを可視化します。
+Visualizes AI agent token usage and costs.
 
-- **日次使用量チャート**
-- **エージェント別内訳**
-- **予算設定** — 月次の予算上限を設定し、超過時にアラート
+- **Daily Usage Chart**
+- **Breakdown by Agent**
+- **Budget Settings** — Set monthly budget caps and receive alerts when exceeded
 
-## Settings ページ
+## Settings Page
 
-### リポジトリ設定
+### Repository Settings
 
-- リポジトリの追加・編集・削除
-- ラベル、ターゲットブランチ、デフォルトエージェントの設定
-- Issue ルーティングルール
+- Add, edit, and remove repositories
+- Configure labels, target branches, and default agents
+- Issue routing rules
 
-### GitHub 連携
+### GitHub Integration
 
-- GitHub App のインストール・管理
-- Personal Access Token (PAT) の登録
-- 接続ステータスの確認
+- Install and manage the GitHub App
+- Register Personal Access Tokens (PAT)
+- Check connection status
 
-### 通知設定
+### Notification Settings
 
-- Slack / Discord / Email の通知設定
-- 通知ルール（重要度フィルタリング）
-- テスト通知の送信
+- Slack / Discord / Email notification configuration
+- Notification rules (severity filtering)
+- Send test notifications
 
-### 課金管理
+### Billing Management
 
-- 現在のプランの確認
-- プランのアップグレード/ダウングレード
-- 請求履歴の確認
+- View current plan
+- Upgrade/downgrade plans
+- View billing history
 
 > [!TIP]
-> ダッシュボードは [https://ados-platform-dashboard.web.app](https://ados-platform-dashboard.web.app) からアクセスできます。
+> Access the dashboard at [https://ados-platform-dashboard.web.app](https://ados-platform-dashboard.web.app).

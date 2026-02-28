@@ -1,8 +1,8 @@
-# Docker Setup
+# Настройка Docker
 
-This guide explains how to build an ADOS self-hosted environment with Docker.
+Это руководство описывает создание self-hosted среды ADOS с использованием Docker.
 
-## Architecture
+## Архитектура
 
 ```
 ┌─────────────────────────────────────────────┐
@@ -27,24 +27,24 @@ This guide explains how to build an ADOS self-hosted environment with Docker.
 └──────────────┘
 ```
 
-## Docker Image
+## Docker-образ
 
-ADOS provides the `ados-work-runner` Docker image, which comes pre-installed with the following CLIs:
+ADOS предоставляет Docker-образ `ados-work-runner`, в который предустановлены следующие CLI:
 
 - GitHub Copilot CLI
 - Claude Code CLI
 - OpenAI Codex CLI
 - Git / Docker CLI
 
-## Docker Compose Configuration
+## Конфигурация Docker Compose
 
-### Basic Configuration
+### Базовая конфигурация
 
 ```yaml
 version: '3.8'
 
 services:
-  # Work Runner - Main Process
+  # Work Runner - Основной процесс
   work-runner:
     image: ghcr.io/1cll/ados-work-runner:latest
     container_name: ados-work-runner
@@ -71,7 +71,7 @@ volumes:
     driver: local
 ```
 
-### Multi-Runner Configuration
+### Конфигурация с несколькими Runner
 
 ```yaml
 version: '3.8'
@@ -83,7 +83,7 @@ services:
     environment:
       - ADOS_RUNNER_ID=runner-001
       - ADOS_GROUP=general
-      # ... common environment variables
+      # ... общие переменные окружения
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - workspace-1:/workspace
@@ -119,9 +119,9 @@ volumes:
   workspace-gpu:
 ```
 
-## Docker Socket Mount
+## Монтирование Docker Socket
 
-Work Runner uses the Docker-in-Docker pattern for job execution. You must mount the host's Docker socket:
+Work Runner использует паттерн Docker-in-Docker для выполнения задач. Необходимо смонтировать Docker-сокет хоста:
 
 ```yaml
 volumes:
@@ -129,11 +129,11 @@ volumes:
 ```
 
 > [!WARNING]
-> Mounting the Docker socket carries security risks. Only use it in trusted network environments.
+> Монтирование Docker-сокета несёт риски безопасности. Используйте его только в доверенных сетевых окружениях.
 
 ## Health Check
 
-Configure Docker health checks to monitor Runner status:
+Настройте Docker health check для мониторинга статуса Runner:
 
 ```yaml
 services:
@@ -146,25 +146,25 @@ services:
       start_period: 10s
 ```
 
-## Log Management
+## Управление логами
 
 ```bash
-# View Runner logs
+# Просмотр логов Runner
 docker logs ados-work-runner
 
-# View logs in real time
+# Просмотр логов в реальном времени
 docker logs -f ados-work-runner
 
-# View last 100 lines only
+# Просмотр последних 100 строк
 docker logs --tail 100 ados-work-runner
 ```
 
-## Updates
+## Обновления
 
 ```bash
-# Pull the latest image
+# Загрузка последнего образа
 docker pull ghcr.io/1cll/ados-work-runner:latest
 
-# Recreate the container
+# Пересоздание контейнера
 docker compose up -d --force-recreate
 ```

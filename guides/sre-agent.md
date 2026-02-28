@@ -1,17 +1,18 @@
-# SRE エージェント
+# SRE Agent
 
-SRE エージェントは本番環境のメトリクスを監視し、異常を検知すると自動で調査・修復を行います。
+The SRE Agent monitors production environment metrics and automatically investigates and remediates anomalies when detected.
 
-## 概要
+## Overview
 
 ```
 ┌──────────────┐     ┌───────────────┐     ┌──────────────┐     ┌──────────────┐
-│  メトリクス    │ ──▶ │  異常検知      │ ──▶ │  原因調査      │ ──▶ │  修復 PR     │
-│  (GCP Logs)  │     │  (閾値超過)    │     │  (AI 分析)    │     │  (自動作成)  │
+│  Metrics      │ ──▶ │  Anomaly      │ ──▶ │  Root Cause   │ ──▶ │  Fix PR      │
+│  (Cloud Logs) │     │  Detection    │     │  Analysis     │     │  (auto)      │
+│               │     │  (threshold)  │     │  (AI)         │     │              │
 └──────────────┘     └───────────────┘     └──────────────┘     └──────────────┘
 ```
 
-## 有効化
+## Enabling
 
 ```yaml
 repos:
@@ -21,98 +22,98 @@ repos:
         enabled: true
         gcloud_projects:
           - my-gcp-project-id
-        error_threshold: 10        # エラー率の閾値（/分）
-        latency_threshold_ms: 5000 # レイテンシの閾値（ミリ秒）
-        check_interval: 5m         # チェック間隔
-        cooldown_duration: 1h      # 同一アラートの再発防止期間
+        error_threshold: 10        # Error rate threshold (/min)
+        latency_threshold_ms: 5000 # Latency threshold (ms)
+        check_interval: 5m         # Check interval
+        cooldown_duration: 1h      # Cooldown to prevent duplicate alerts
 ```
 
-## 監視項目
+## Monitored Metrics
 
-### エラーレート
-- アプリケーションのエラーログ頻度を監視
-- `error_threshold` を超えた場合にアラート
+### Error Rate
+- Monitors application error log frequency
+- Alerts when `error_threshold` is exceeded
 
-### レイテンシ
-- API レスポンスタイムを監視
-- `latency_threshold_ms` を超えた場合にアラート
+### Latency
+- Monitors API response times
+- Alerts when `latency_threshold_ms` is exceeded
 
-### リソース
-- メモリ使用量（OOM Kill の検知）
-- CPU 使用率
-- ディスク使用量
+### Resources
+- Memory usage (OOM Kill detection)
+- CPU utilization
+- Disk usage
 
-### アプリケーションログ
-- GCP Cloud Logging からログを取得
-- スタックトレースの自動解析
-- パターンマッチによる異常検知
+### Application Logs
+- Retrieves logs from GCP Cloud Logging
+- Automatic stack trace analysis
+- Pattern-based anomaly detection
 
-## GCP 連携
+## GCP Integration
 
-現在、SRE エージェントは **Google Cloud Platform** の以下のサービスと連携します：
+The SRE Agent currently integrates with the following **Google Cloud Platform** services:
 
-| サービス | 用途 |
-|---------|------|
-| **Cloud Logging** | アプリケーションログの取得 |
-| **Cloud Monitoring** | メトリクスの取得 |
-| **Cloud Run** | コンテナ環境の監視 |
+| Service | Purpose |
+|---------|---------|
+| **Cloud Logging** | Retrieve application logs |
+| **Cloud Monitoring** | Retrieve metrics |
+| **Cloud Run** | Monitor container environments |
 
-### 認証設定
+### Authentication Setup
 
 ```bash
-# 環境変数で GCP プロジェクトを設定
+# Set GCP project via environment variables
 export GCP_PROJECT=my-project-id
 export GOOGLE_CLOUD_PROJECT=my-project-id
 ```
 
 > [!NOTE]
-> AWS / Azure 対応は今後のロードマップに含まれています。
+> AWS and Azure support is planned for future releases.
 
-## 自動修復の例
+## Auto-Remediation Examples
 
-### 1. エラーレートのスパイク
-
-```
-検知: /api/users でエラー率が 50/分 を超過
-分析: NullPointerException が db.query() で発生
-原因: 新しいデプロイでデータベース接続のNull チェックが漏れていた
-修復: Null チェックを追加した PR を自動作成
-```
-
-### 2. メモリリーク (OOM)
+### 1. Error Rate Spike
 
 ```
-検知: コンテナが OOM Kill で再起動
-分析: ログから大量のオブジェクト生成パターンを特定
-原因: キャッシュのサイズ制限がなかった
-修復: LRU キャッシュの上限を設定する PR を自動作成
+Detected: Error rate exceeds 50/min on /api/users
+Analysis: NullPointerException in db.query()
+Cause: Null check missing after new deployment
+Fix: Auto-created PR adding null check
 ```
 
-### 3. レイテンシ悪化
+### 2. Memory Leak (OOM)
 
 ```
-検知: /api/search のレイテンシが 5000ms を超過
-分析: 新しいクエリにインデックスが効いていない
-原因: 新規カラムへのクエリ追加時にインデックスが未作成
-修復: インデックス追加のマイグレーション PR を自動作成
+Detected: Container restarted due to OOM Kill
+Analysis: Identified excessive object creation pattern from logs
+Cause: Cache had no size limit
+Fix: Auto-created PR adding LRU cache limit
 ```
 
-## アラート通知
+### 3. Latency Degradation
 
-SRE エージェントのアラートは通知システムと連携できます：
+```
+Detected: /api/search latency exceeds 5000ms
+Analysis: New query lacks index
+Cause: Index not created when new column query was added
+Fix: Auto-created PR with index migration
+```
 
-- **Slack** — チャンネルに即時通知
-- **Discord** — Webhook で通知
-- **メール** — アラートメール送信
+## Alert Notifications
 
-詳細は [通知設定](guides/notifications.md) を参照してください。
+SRE Agent alerts can integrate with the notification system:
 
-## Pro プラン以上の機能
+- **Slack** — Instant channel notifications
+- **Discord** — Webhook notifications
+- **Email** — Alert emails
 
-SRE エージェントは **Pro プラン以上** でご利用いただけます。
+See [Notification Settings](guides/notifications.md) for details.
 
-| プラン | SRE エージェント |
-|--------|----------------|
+## Plan Availability
+
+The SRE Agent is available on **Pro plan and above**.
+
+| Plan | SRE Agent |
+|------|-----------|
 | Free | ❌ |
 | Pro | ✅ |
 | Team | ✅ |

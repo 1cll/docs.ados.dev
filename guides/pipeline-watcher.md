@@ -1,17 +1,18 @@
-# パイプライン監視 & 自動修復
+# Pipeline Monitoring & Auto-Repair
 
-Pipeline Watcher は CI/CD パイプラインの失敗を検知し、AI が自動で修復コードを生成・プッシュします。
+Pipeline Watcher detects CI/CD pipeline failures and automatically generates and pushes repair code using AI.
 
-## 概要
+## Overview
 
 ```
 ┌──────────────┐     ┌───────────────┐     ┌──────────────┐     ┌──────────────┐
-│  CI/CD 失敗   │ ──▶ │  原因を分析    │ ──▶ │  修復コード    │ ──▶ │  プッシュ     │
-│  (検知)       │     │  (AI 解析)    │     │  (AI 生成)   │     │  (自動)      │
+│  CI/CD        │ ──▶ │  Analyze      │ ──▶ │  Generate     │ ──▶ │  Push        │
+│  Failure      │     │  Root Cause   │     │  Fix Code     │     │  (auto)      │
+│  (detected)   │     │  (AI)         │     │  (AI)         │     │              │
 └──────────────┘     └───────────────┘     └──────────────┘     └──────────────┘
 ```
 
-## 有効化
+## Enabling
 
 ```yaml
 repos:
@@ -21,87 +22,87 @@ repos:
         enabled: true
 ```
 
-## 対応 CI/CD プラットフォーム
+## Supported CI/CD Platforms
 
-| プラットフォーム | 検知方法 |
-|----------------|---------|
-| **GitHub Actions** | Webhook / API ポーリング |
-| **GitLab CI** | Webhook / API ポーリング |
-| **CircleCI** | API ポーリング |
+| Platform | Detection Method |
+|----------|-----------------|
+| **GitHub Actions** | Webhook / API polling |
+| **GitLab CI** | Webhook / API polling |
+| **CircleCI** | API polling |
 | **Jenkins** | Webhook |
 
-## 検知するエラータイプ
+## Detected Error Types
 
-Pipeline Watcher は以下のエラーを自動的に分類・対処します：
+Pipeline Watcher automatically classifies and handles the following errors:
 
-### テスト失敗
-- ユニットテストの失敗
-- 統合テストのタイムアウト
-- E2E テストのアサーションエラー
+### Test Failures
+- Unit test failures
+- Integration test timeouts
+- E2E test assertion errors
 
-### ビルドエラー
-- コンパイルエラー
-- 型エラー（TypeScript 等）
-- 依存関係の解決失敗
+### Build Errors
+- Compilation errors
+- Type errors (TypeScript, etc.)
+- Dependency resolution failures
 
-### リント / フォーマット
-- ESLint / Prettier のエラー
-- Go lint、Clippy (Rust) 等
+### Lint / Formatting
+- ESLint / Prettier errors
+- Go lint, Clippy (Rust), etc.
 
-### セキュリティスキャン
-- 脆弱性のある依存関係
-- セキュリティルール違反
+### Security Scans
+- Vulnerable dependencies
+- Security rule violations
 
-## 自動修復の流れ
+## Auto-Repair Flow
 
-### 1. 失敗の検知
-Pipeline Watcher が CI/CD の失敗を Webhook またはポーリングで検知
+### 1. Failure Detection
+Pipeline Watcher detects CI/CD failures via webhooks or polling
 
-### 2. ログの取得
-失敗したジョブのログを自動取得し、エラーメッセージを抽出
+### 2. Log Retrieval
+Automatically retrieves failed job logs and extracts error messages
 
-### 3. AI 分析
-エラーメッセージとソースコードを AI に渡し、根本原因を特定
+### 3. AI Analysis
+Passes error messages and source code to AI to identify the root cause
 
-### 4. 修復コードの生成
-AI が修復パッチを生成し、既存の PR に追加コミットとしてプッシュ
+### 4. Fix Code Generation
+AI generates a repair patch and pushes it as an additional commit to the existing PR
 
-### 5. 結果の確認
-修復後の CI 結果を再度監視。成功すればクローズ、失敗すれば再試行
+### 5. Result Verification
+Monitors CI results after the fix. Closes on success, retries on failure
 
-## 再試行の制限
+## Retry Limits
 
-自動修復の無限ループを防ぐため、再試行回数に制限があります：
+To prevent infinite auto-repair loops, retry attempts are limited:
 
-| パラメータ | デフォルト | 説明 |
-|-----------|-----------|------|
-| 最大再試行回数 | 3 | 1 つの PR あたりの修復試行回数 |
-| クールダウン | 5 分 | 再試行間の待機時間 |
+| Parameter | Default | Description |
+|-----------|---------|-------------|
+| Max retries | 3 | Repair attempts per PR |
+| Cooldown | 5 min | Wait time between retries |
 
-## ユースケース
+## Use Cases
 
-### テスト失敗の自動修復
-
-```
-1. PR を作成
-2. GitHub Actions でテスト実行
-3. テスト 2 件失敗
-4. Pipeline Watcher が検知
-5. AI がテストログを分析
-6. 修正コミットを自動プッシュ
-7. テスト再実行 → 成功 ✅
-```
-
-### 依存関係エラーの修正
+### Auto-Repairing Test Failures
 
 ```
-1. Dependabot が依存関係を更新
-2. ビルドが壊れる
-3. Pipeline Watcher が検知
-4. AI が互換性を確認
-5. 互換コードに修正
-6. ビルド成功 ✅
+1. PR is created
+2. GitHub Actions runs tests
+3. 2 tests fail
+4. Pipeline Watcher detects the failure
+5. AI analyzes the test logs
+6. Fix commit is automatically pushed
+7. Tests re-run → success ✅
+```
+
+### Fixing Dependency Errors
+
+```
+1. Dependabot updates a dependency
+2. Build breaks
+3. Pipeline Watcher detects the failure
+4. AI checks compatibility
+5. Code is updated for compatibility
+6. Build succeeds ✅
 ```
 
 > [!TIP]
-> Pipeline Watcher は [Issue 自動化](guides/issue-automation.md) で作成された PR だけでなく、人間が作成した PR の CI 失敗も監視できます。
+> Pipeline Watcher monitors CI failures not only on PRs created by [Issue Automation](guides/issue-automation.md), but also on PRs created by humans.

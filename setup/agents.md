@@ -1,67 +1,67 @@
-# AI エージェント設定
+# AI Agent Configuration
 
-ADOS は複数の AI コーディングエージェントをサポートし、Issue の複雑さに応じて自動選択します。
+ADOS supports multiple AI coding agents and automatically selects the best one based on issue complexity.
 
-## 対応エージェント
+## Supported Agents
 
-| エージェント | CLI コマンド | 特徴 |
-|-------------|-------------|------|
-| **GitHub Copilot** | `copilot` | GitHub Copilot CLI。GitHub トークンで認証 |
-| **Claude Code** | `claude` | Anthropic Claude Code CLI。高い推論能力 |
-| **OpenAI Codex** | `codex` | OpenAI Codex CLI。OpenAI API キーで認証 |
+| Agent | CLI Command | Features |
+|-------|-------------|----------|
+| **GitHub Copilot** | `copilot` | GitHub Copilot CLI. Authenticated via GitHub token |
+| **Claude Code** | `claude` | Anthropic Claude Code CLI. High reasoning capability |
+| **OpenAI Codex** | `codex` | OpenAI Codex CLI. Authenticated via OpenAI API key |
 
-## エージェント選択の仕組み
+## Agent Selection Logic
 
-ADOS は Issue を 3 つの複雑度レベルに自動分類し、最適なエージェントを選択します：
+ADOS automatically classifies issues into 3 complexity levels and selects the optimal agent:
 
-| 複雑度 | 例 | 推奨エージェント |
-|--------|---|----------------|
-| **Simple** | タイポ修正、小さな変更 | Copilot |
-| **Medium** | 新機能追加、バグ修正 | Claude |
-| **Complex** | アーキテクチャ変更、大規模リファクタ | Claude (opus) |
+| Complexity | Example | Recommended Agent |
+|------------|---------|-------------------|
+| **Simple** | Typo fix, small change | Copilot |
+| **Medium** | New feature, bug fix | Claude |
+| **Complex** | Architecture change, major refactor | Claude (opus) |
 
-### 自動選択 vs 手動指定
+### Auto-Selection vs Manual Override
 
-- **自動選択（デフォルト）**: ADOS が Issue の内容を分析して最適なエージェントを選択
-- **手動指定**: リポジトリ設定で `default_agent` を明示的に指定
+- **Auto-selection (default)**: ADOS analyzes issue content and selects the best agent
+- **Manual override**: Explicitly specify `default_agent` in repository settings
 
-## エージェントの認証設定
+## Agent Authentication
 
 ### GitHub Copilot
 
-GitHub App または PAT で認証します。追加設定は不要です。
+Authenticated via GitHub App or PAT. No additional setup required.
 
 > [!WARNING]
-> GitHub App のインストール用トークン（`ghs_` で始まるもの）では Copilot CLI は動作しません。ユーザーレベルの PAT が必要です。
+> GitHub App installation tokens (starting with `ghs_`) do not work with Copilot CLI. A user-level PAT is required.
 
 ### Claude Code
 
-認証方法は 2 種類あります：
+Two authentication methods are available:
 
-1. **Anthropic API キー** (`sk-ant-api03-...`)
-   - ダッシュボードの **Settings** → **Connections** → **Anthropic API Key** に登録
-   - 環境変数: `ANTHROPIC_API_KEY`
+1. **Anthropic API Key** (`sk-ant-api03-...`)
+   - Register in dashboard **Settings** → **Connections** → **Anthropic API Key**
+   - Environment variable: `ANTHROPIC_API_KEY`
 
-2. **Claude MAX OAuth トークン** (`sk-ant-oat01-...`)
-   - Claude MAX サブスクリプションから取得
-   - 環境変数: `CLAUDE_CODE_OAUTH_TOKEN`
+2. **Claude MAX OAuth Token** (`sk-ant-oat01-...`)
+   - Obtain from your Claude MAX subscription
+   - Environment variable: `CLAUDE_CODE_OAUTH_TOKEN`
 
 ### OpenAI Codex
 
-OpenAI API キーで認証します。
+Authenticated via OpenAI API key.
 
-- ダッシュボードの **Settings** → **Connections** → **OpenAI API Key** に登録
-- 環境変数: `OPENAI_API_KEY`
+- Register in dashboard **Settings** → **Connections** → **OpenAI API Key**
+- Environment variable: `OPENAI_API_KEY`
 
-## フォールバック
+## Fallback
 
-エージェントが失敗した場合、自動的に別のエージェントにフォールバックします。
+If an agent fails, ADOS automatically falls back to another agent.
 
 ```
-Claude (失敗) → Copilot (失敗) → Codex
+Claude (fail) → Copilot (fail) → Codex
 ```
 
-フォールバックはリポジトリ設定で制御できます：
+Fallback can be configured per repository:
 
 ```yaml
 repos:
@@ -73,27 +73,42 @@ repos:
       - codex
 ```
 
-## モデル設定
+## Model Configuration
 
-各エージェントのモデルを指定できます：
+Specify the model for each agent:
 
 ```yaml
 repos:
   - name: my-repo
-    model: claude-sonnet-4    # Claude のデフォルトモデル
+    model: claude-sonnet-4    # Default model for Claude
 ```
 
-### 利用可能なモデル
+### Available Models
 
-| エージェント | モデル例 |
-|-------------|---------|
+| Agent | Example Models |
+|-------|---------------|
 | Claude | `claude-sonnet-4`, `claude-opus-4`, `claude-haiku-4-5` |
 | Copilot | `claude-opus-4.6`, `gpt-5.2-codex` |
-| Codex | デフォルトモデルを使用 |
+| Codex | Uses the default model |
 
-## ルーティングルール
+## Routing Rules
 
-Issue のラベルやキーワードに基づいて、特定のエージェントにルーティングできます：
+Route to specific agents based on issue labels or keywords:
+
+```yaml
+routing:
+  rules:
+    - labels: ["security", "urgent"]
+      agent: claude
+      model: claude-opus-4
+    - labels: ["docs", "typo"]
+      agent: copilot
+    - keywords: ["refactor", "architecture"]
+      agent: claude
+  fallback:
+    - claude
+    - copilot
+```
 
 ```yaml
 routing:

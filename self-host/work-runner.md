@@ -1,53 +1,53 @@
-# Work Runner セットアップ
+# Work Runner Setup
 
-Work Runner は ADOS のジョブ実行エンジンです。クラウド（ADOS マネージド）またはセルフホスト環境で動作します。
+Work Runner is ADOS's job execution engine. It operates in the cloud (ADOS managed) or in self-hosted environments.
 
-## Work Runner とは
+## What Is Work Runner?
 
-Work Runner は以下の役割を担います：
+Work Runner handles the following:
 
-- AI エージェント（Copilot / Claude / Codex）の実行環境
-- リポジトリのクローン・変更・プッシュ
-- テストの実行
-- ダッシュボードとの WebSocket 通信
+- Execution environment for AI agents (Copilot / Claude / Codex)
+- Cloning, modifying, and pushing repositories
+- Running tests
+- WebSocket communication with the dashboard
 
-## 実行モード
+## Execution Modes
 
-### クラウドモード（デフォルト）
+### Cloud Mode (Default)
 
-ADOS のマネージドインフラで自動実行されます。セットアップ不要です。
+Runs automatically on ADOS managed infrastructure. No setup required.
 
-### セルフホストモード
+### Self-Hosted Mode
 
-自社のサーバーや CI 環境で Work Runner を実行できます。
+Run Work Runner on your own servers or CI environment.
 
-## セルフホスト Work Runner のセットアップ
+## Self-Hosted Work Runner Setup
 
-### 前提条件
+### Prerequisites
 
-- Docker がインストール済み
-- ADOS のアカウントとトークン
-- AI エージェントの認証情報
+- Docker installed
+- ADOS account and token
+- AI agent credentials
 
-### 環境変数
+### Environment Variables
 
-| 変数 | 必須 | 説明 |
-|------|-----|------|
-| `ADOS_API_URL` | ✅ | ADOS API の URL |
-| `ADOS_TOKEN` | ✅ | 認証トークン |
-| `ADOS_RUNNER_ID` | ✅ | Runner の一意な ID |
-| `WORKSPACE_DIR` | ✅ | 作業ディレクトリ |
-| `ADOS_MODE` | ❌ | 動作モード（`chat` / `issue` / `all`） |
-| `ADOS_GROUP` | ❌ | Runner グループ名 |
-| `ADOS_CPUS` | ❌ | 使用する CPU コア数 |
-| `ADOS_MEMORY` | ❌ | メモリ上限 |
-| `ADOS_HOSTNAME` | ❌ | ホスト名（識別用） |
-| `ADOS_TENANT_ID` | ❌ | テナント ID |
-| `GITHUB_TOKEN` | ✅ | GitHub アクセストークン |
-| `ANTHROPIC_API_KEY` | ❌ | Claude の API キー |
-| `CLAUDE_CODE_OAUTH_TOKEN` | ❌ | Claude MAX の OAuth トークン |
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `ADOS_API_URL` | ✅ | ADOS API URL |
+| `ADOS_TOKEN` | ✅ | Authentication token |
+| `ADOS_RUNNER_ID` | ✅ | Unique Runner ID |
+| `WORKSPACE_DIR` | ✅ | Working directory |
+| `ADOS_MODE` | ❌ | Operating mode (`chat` / `issue` / `all`) |
+| `ADOS_GROUP` | ❌ | Runner group name |
+| `ADOS_CPUS` | ❌ | Number of CPU cores to use |
+| `ADOS_MEMORY` | ❌ | Memory limit |
+| `ADOS_HOSTNAME` | ❌ | Hostname (for identification) |
+| `ADOS_TENANT_ID` | ❌ | Tenant ID |
+| `GITHUB_TOKEN` | ✅ | GitHub access token |
+| `ANTHROPIC_API_KEY` | ❌ | Claude API key |
+| `CLAUDE_CODE_OAUTH_TOKEN` | ❌ | Claude MAX OAuth token |
 
-### Docker で起動
+### Start with Docker
 
 ```bash
 docker run -d \
@@ -63,7 +63,7 @@ docker run -d \
   ghcr.io/1cll/ados-work-runner:latest
 ```
 
-### Docker Compose で起動
+### Start with Docker Compose
 
 ```yaml
 version: '3.8'
@@ -91,12 +91,12 @@ volumes:
 docker compose up -d
 ```
 
-## Runner グループ
+## Runner Groups
 
-複数の Runner をグループ化して、特定のリポジトリを特定の Runner グループに割り当てることができます：
+Group multiple Runners and assign specific repositories to specific Runner groups:
 
 ```yaml
-# ados.yaml のリポジトリ設定
+# Repository settings in ados.yaml
 repos:
   - name: frontend-app
     work_runner_group: frontend-runners
@@ -106,32 +106,32 @@ repos:
 ```
 
 ```bash
-# Frontend 用 Runner
+# Frontend Runner
 docker run -d \
   -e ADOS_GROUP=frontend-runners \
   -e ADOS_RUNNER_ID=frontend-001 \
   ...
 
-# Backend 用 Runner
+# Backend Runner
 docker run -d \
   -e ADOS_GROUP=backend-runners \
   -e ADOS_RUNNER_ID=backend-001 \
   ...
 ```
 
-## ステータス確認
+## Status Check
 
-### ダッシュボードから
+### From the Dashboard
 
-**Settings** → **Runners** で接続中の Work Runner の一覧とステータスを確認できます。
+Go to **Settings** → **Runners** to view the list and status of connected Work Runners.
 
-### API から
+### Via API
 
 ```bash
 GET /api/runners
 ```
 
-レスポンス：
+Response:
 ```json
 [
   {
@@ -146,12 +146,12 @@ GET /api/runners
 ]
 ```
 
-## スケーリング
+## Scaling
 
-複数の Work Runner を起動して並列処理能力を向上できます：
+Start multiple Work Runners to increase parallel processing capacity:
 
 ```bash
-# 3 台の Runner を起動
+# Start 3 Runners
 for i in 1 2 3; do
   docker run -d \
     --name ados-runner-$i \
@@ -161,4 +161,4 @@ done
 ```
 
 > [!TIP]
-> セルフホスト Runner を使うことで、プライベートネットワーク内のリソースにもアクセスできます。社内の開発サーバーやデータベースに接続が必要な場合に有用です。
+> Self-hosted Runners can access resources within your private network. This is useful when you need to connect to internal development servers or databases.

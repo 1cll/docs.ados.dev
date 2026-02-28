@@ -1,88 +1,78 @@
 # Agentic Chat
 
-Agentic Chat は、リポジトリのコンテキストを理解した AI とリアルタイムに対話できる機能です。
+Agentic Chat is a feature that lets you interact in real time with an AI that understands your repository context.
 
-## 概要
+## Overview
 
-通常の AI チャットとは異なり、Agentic Chat は：
+Unlike typical AI chat, Agentic Chat can:
 
-- リポジトリのコード構造を理解
-- ファイルの読み取り・編集が可能
-- ターミナルコマンドを実行可能
-- 変更内容をそのまま PR 化可能
+- Understand your repository's code structure
+- Read and edit files
+- Execute terminal commands
+- Turn changes directly into PRs
 
-## 使い方
+## Usage
 
-### ダッシュボードから
+### From the Dashboard
 
-1. ダッシュボードで対象リポジトリを選択
-2. チャットアイコンをクリック
-3. 自然言語で依頼を入力
+1. Select the target repository in the dashboard
+2. Click the chat icon
+3. Enter your request in natural language
 
-### CLI から
+### From the CLI
 
 ```bash
-# Agentic Chat モードで起動
+# Start in Agentic Chat mode
 export ADOS_MODE=chat
 ados start
 ```
 
-## 対話の例
+## Conversation Examples
 
-### コードの質問
-
-```
-ユーザー: このリポジトリの認証の仕組みを教えて
-AI: このプロジェクトでは JWT ベースの認証を使っています。
-    主要なファイルは...
-```
-
-### コード変更の依頼
+### Code Questions
 
 ```
-ユーザー: ログインAPIにレートリミットを追加して
-AI: 了解しました。以下の変更を行います：
-    1. rate-limiter パッケージを追加
-    2. /api/login にミドルウェアを設定
-    3. テストを追加
+User: How does authentication work in this repository?
+AI: This project uses JWT-based authentication.
+    The key files are...
+```
+
+### Code Change Requests
+
+```
+User: Add rate limiting to the login API
+AI: Got it. I'll make the following changes:
+    1. Add the rate-limiter package
+    2. Configure middleware for /api/login
+    3. Add tests
     
-    [変更をPR化する] ボタンで PR を作成できます。
+    Click [Create PR] to create a Pull Request.
 ```
 
-### デバッグ支援
+### Debugging Assistance
 
 ```
-ユーザー: POST /api/orders で 500 エラーが出る。原因を調べて
-AI: orders.controller.ts を確認しました。
-    L45 で items が undefined の場合の処理が漏れています。
-    修正コードを提案します...
+User: POST /api/orders returns a 500 error. Can you investigate?
+AI: I checked orders.controller.ts.
+    L45 is missing a handler for when items is undefined.
+    Here's a suggested fix...
 ```
 
-## モード
+## Modes
 
-Agentic Chat にはいくつかの動作モードがあります：
+Agentic Chat supports several operating modes:
 
-| モード | 環境変数 | 説明 |
-|--------|---------|------|
-| `chat` | `ADOS_MODE=chat` | チャットのみ |
-| `issue` | `ADOS_MODE=issue` | Issue 処理のみ |
-| `all` | `ADOS_MODE=all` | チャット + Issue 処理 |
+| Mode | Environment Variable | Description |
+|------|---------------------|-------------|
+| `chat` | `ADOS_MODE=chat` | Chat only |
+| `issue` | `ADOS_MODE=issue` | Issue processing only |
+| `all` | `ADOS_MODE=all` | Chat + Issue processing |
 
-## WebSocket 接続
+## Security
 
-Agentic Chat はリアルタイム通信に WebSocket を使用しています：
-
-```
-wss://api.ados.dev/api/work/runners/ws
-```
-
-Work Runner がクラウドまたはセルフホスト環境で WebSocket 接続を維持し、チャットメッセージをリアルタイムに処理します。
-
-## セキュリティ
-
-- チャットの内容はサーバーに保存されません
-- リポジトリへのアクセスはユーザーの権限に基づきます
-- AI への指示は `copilot-instructions.md` で制御可能
+- Chat content is not stored on the server
+- Repository access is based on user permissions
+- AI instructions can be controlled via `copilot-instructions.md`
 
 > [!TIP]
-> Agentic Chat は「Issue にするほどではないけど、AI に手伝ってほしい」という場面で活用できます。ちょっとした質問やクイックな修正依頼に最適です。
+> Agentic Chat is ideal for situations where you want AI assistance but don't need a full issue — perfect for quick questions or small fix requests.

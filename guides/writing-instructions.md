@@ -1,108 +1,108 @@
-# copilot-instructions.md の書き方
+# Writing copilot-instructions.md
 
-`copilot-instructions.md` は、AI エージェントにリポジトリ固有のルールやコンテキストを伝えるためのファイルです。ADOS はこのファイルを読み取り、AI の実装品質を大幅に向上させます。
+`copilot-instructions.md` is a file that provides repository-specific rules and context to AI agents. ADOS reads this file to significantly improve AI implementation quality.
 
-## 配置場所
+## File Location
 
 ```
 .github/copilot-instructions.md
 ```
 
-リポジトリのルートにある `.github/` ディレクトリ内に配置します。
+Place it inside the `.github/` directory at the root of your repository.
 
-## 基本構成
+## Basic Structure
 
 ```markdown
-# プロジェクト概要
-このリポジトリは〇〇のバックエンド API です。
+# Project Overview
+This repository is the backend API for ○○.
 
-# 技術スタック
-- 言語: TypeScript
-- フレームワーク: Express.js
-- データベース: PostgreSQL + Prisma
-- テスト: Jest
+# Tech Stack
+- Language: TypeScript
+- Framework: Express.js
+- Database: PostgreSQL + Prisma
+- Testing: Jest
 
-# コーディング規約
-- 変数名はキャメルケースを使用
-- 関数はアロー関数で記述
-- エラーハンドリングは必ず try-catch で行う
+# Coding Conventions
+- Use camelCase for variable names
+- Write functions as arrow functions
+- Always use try-catch for error handling
 
-# ファイル構造
-- `src/controllers/` — API コントローラー
-- `src/services/` — ビジネスロジック
-- `src/models/` — Prisma モデル
-- `src/middleware/` — Express ミドルウェア
+# File Structure
+- `src/controllers/` — API controllers
+- `src/services/` — Business logic
+- `src/models/` — Prisma models
+- `src/middleware/` — Express middleware
 
-# テストルール
-- すべてのサービス関数にユニットテストを書く
-- テストファイルは `__tests__/` ディレクトリに配置
-- テスト名は日本語で記述
+# Testing Rules
+- Write unit tests for all service functions
+- Place test files in the `__tests__/` directory
+- Write descriptive test names
 
-# 禁止事項
-- `any` 型の使用禁止
-- `console.log` の使用禁止（ロガーを使用）
-- 直接 SQL クエリの使用禁止（Prisma を使用）
+# Prohibited Patterns
+- No `any` types
+- No `console.log` (use the logger)
+- No raw SQL queries (use Prisma)
 ```
 
-## 効果的な書き方のポイント
+## Tips for Writing Effective Instructions
 
-### 1. 具体的に書く
+### 1. Be Specific
 
-❌ 悪い例:
+❌ Bad example:
 ```markdown
-きれいなコードを書いてください
+Write clean code
 ```
 
-✅ 良い例:
+✅ Good example:
 ```markdown
-- 関数は 30 行以内に収める
-- ネストは 3 レベルまで
-- 早期リターンパターンを使用する
+- Keep functions under 30 lines
+- Max 3 levels of nesting
+- Use early return pattern
 ```
 
-### 2. アーキテクチャを明記
+### 2. Describe the Architecture
 
 ```markdown
-# アーキテクチャ
-- Clean Architecture を採用
-- レイヤー: Controller → UseCase → Repository
-- 依存性の方向: 外側 → 内側
-- DI コンテナ: tsyringe を使用
+# Architecture
+- Uses Clean Architecture
+- Layers: Controller → UseCase → Repository
+- Dependency direction: outer → inner
+- DI container: tsyringe
 ```
 
-### 3. 既存のパターンを示す
+### 3. Show Existing Patterns
 
 ```markdown
-# 新しい API エンドポイントの追加方法
-1. `src/controllers/` に新しいコントローラーを作成
-2. `src/services/` に対応するサービスを作成
-3. `src/routes.ts` にルーティングを追加
-4. `src/__tests__/` にテストを作成
+# How to Add a New API Endpoint
+1. Create a new controller in `src/controllers/`
+2. Create the corresponding service in `src/services/`
+3. Add routing in `src/routes.ts`
+4. Create tests in `src/__tests__/`
 
-参考: `src/controllers/users.controller.ts`
+Reference: `src/controllers/users.controller.ts`
 ```
 
-### 4. NG パターンを明記
+### 4. List Prohibited Patterns
 
 ```markdown
-# やってはいけないこと
-- グローバル変数の使用
-- 同期的なファイル操作（fs.readFileSync 等）
-- 環境変数の直接参照（config モジュールを経由）
-- マジックナンバーの使用
+# Things to Avoid
+- Global variables
+- Synchronous file operations (e.g., fs.readFileSync)
+- Direct environment variable access (use the config module)
+- Magic numbers
 ```
 
-### 5. 言語・フレームワーク固有のルール
+### 5. Language/Framework-Specific Rules
 
 ```markdown
-# React ルール
-- クラスコンポーネントは使用しない（Functional Component のみ）
-- 状態管理は useState / useReducer を使用
-- グローバル状態は Zustand を使用
-- CSS は Tailwind CSS のユーティリティクラスを使用
+# React Rules
+- Do not use class components (Functional Components only)
+- Use useState / useReducer for state management
+- Use Zustand for global state
+- Use Tailwind CSS utility classes
 
-# API レスポンス形式
-すべての API は以下の形式で返す：
+# API Response Format
+All APIs must return responses in this format:
 {
   "success": true,
   "data": { ... },
@@ -110,14 +110,14 @@
 }
 ```
 
-## ADOS が参照する他のファイル
+## Other Files ADOS References
 
-| ファイル | 用途 |
-|---------|------|
-| `.github/copilot-instructions.md` | メインの指示ファイル |
-| `.ados.yaml` | ADOS 固有の設定 |
-| `README.md` | プロジェクト概要として参照 |
-| `CONTRIBUTING.md` | コントリビューションガイド |
+| File | Purpose |
+|------|---------|
+| `.github/copilot-instructions.md` | Main instruction file |
+| `.ados.yaml` | ADOS-specific configuration |
+| `README.md` | Referenced as project overview |
+| `CONTRIBUTING.md` | Contributing guidelines |
 
 > [!TIP]
-> `copilot-instructions.md` の品質は AI の実装品質に直結します。新しいメンバーへのオンボーディング資料と同じレベルの情報量を目指してください。
+> The quality of `copilot-instructions.md` directly impacts AI implementation quality. Aim for the same level of detail you would provide in onboarding documentation for new team members.

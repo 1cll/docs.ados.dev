@@ -1,38 +1,38 @@
 <!-- docs/_sidebar.md -->
-- **はじめに**
-  - [概要](/)
-  - [クイックスタート](getting-started.md)
-  - [ダッシュボード概要](dashboard.md)
+- **Getting Started**
+  - [Overview](/)
+  - [Quick Start](getting-started.md)
+  - [Dashboard Overview](dashboard.md)
 
-- **セットアップ**
-  - [GitHub 連携](setup/github.md)
-  - [GitLab 連携](setup/gitlab.md)
-  - [Bitbucket 連携](setup/bitbucket.md)
-  - [AI エージェント設定](setup/agents.md)
+- **Setup**
+  - [GitHub Integration](setup/github.md)
+  - [GitLab Integration](setup/gitlab.md)
+  - [Bitbucket Integration](setup/bitbucket.md)
+  - [AI Agent Configuration](setup/agents.md)
 
-- **機能ガイド**
-  - [Issue 自動処理](guides/issue-automation.md)
-  - [パイプライン自動修復](guides/pipeline-watcher.md)
-  - [SRE 運用監視](guides/sre-agent.md)
-  - [AI バックログ生成](guides/ai-backlog.md)
-  - [AutoPilot モード](guides/autopilot.md)
+- **Feature Guides**
+  - [Issue Automation](guides/issue-automation.md)
+  - [Pipeline Auto-Repair](guides/pipeline-watcher.md)
+  - [SRE Monitoring](guides/sre-agent.md)
+  - [AI Backlog Generation](guides/ai-backlog.md)
+  - [AutoPilot Mode](guides/autopilot.md)
   - [Agentic Chat](guides/agentic-chat.md)
-  - [ワークフロー](guides/workflows.md)
-  - [通知設定](guides/notifications.md)
+  - [Workflows](guides/workflows.md)
+  - [Notifications](guides/notifications.md)
   - [copilot-instructions.md](guides/writing-instructions.md)
 
-- **セルフホスト**
+- **Self-Hosting**
   - [Work Runner](self-host/work-runner.md)
-  - [Docker セットアップ](self-host/docker-setup.md)
+  - [Docker Setup](self-host/docker-setup.md)
 
-- **設定リファレンス**
+- **Reference**
   - [ados.yaml](reference/config.md)
-  - [環境変数](reference/env-vars.md)
-  - [API リファレンス](reference/api.md)
-  - [料金プラン](reference/pricing.md)
+  - [Environment Variables](reference/env-vars.md)
+  - [API Reference](reference/api.md)
+  - [Pricing](reference/pricing.md)
 
-- **トラブルシューティング**
-  - [よくある問題](troubleshooting.md)
+- **Troubleshooting**
+  - [Common Issues](troubleshooting.md)
 
 - ---
 - [ados.dev ←](https://ados.dev)

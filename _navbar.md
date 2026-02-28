@@ -1,4 +1,6 @@
 <!-- docs/_navbar.md -->
 - [🏠 ados.dev](https://ados.dev)
-- [📊 ダッシュボード](https://ados-platform-dashboard.web.app)
-- [🐙 GitHub](https://github.com/1cll/ADOS)
+- [📊 Dashboard](https://ados-platform-dashboard.web.app)
+- 🌐 Language
+  - [English](/)
+  - [Русский](/ru/)

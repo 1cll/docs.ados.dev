@@ -1,88 +1,88 @@
-# ワークフローエディタ
+# Workflow Editor
 
-ワークフローエディタは、トリガーとアクションを組み合わせて自動化パイプラインを視覚的に構築できる機能です。
+The Workflow Editor lets you visually build automation pipelines by combining triggers and actions.
 
-## 概要
+## Overview
 
-コードを書かずに、ドラッグ & ドロップでワークフローを構築できます：
+Build workflows without writing code using drag & drop:
 
 ```
-[トリガー] → [アクション 1] → [アクション 2] → [通知]
+[Trigger] → [Action 1] → [Action 2] → [Notify]
 ```
 
-## トリガー
+## Triggers
 
-ワークフローを起動する条件を設定します：
+Configure conditions that start a workflow:
 
-| トリガー | 説明 |
-|---------|------|
-| **Issue Created** | 新しい Issue が作成されたとき |
-| **PR Merged** | PR がマージされたとき |
-| **CI Failed** | CI/CD が失敗したとき |
-| **Schedule** | 定期実行（cron 形式） |
-| **Webhook** | 外部サービスからの Webhook |
-| **Manual** | ダッシュボードから手動実行 |
+| Trigger | Description |
+|---------|-------------|
+| **Issue Created** | When a new issue is created |
+| **PR Merged** | When a PR is merged |
+| **CI Failed** | When CI/CD fails |
+| **Schedule** | Periodic execution (cron format) |
+| **Webhook** | Webhook from an external service |
+| **Manual** | Manual execution from the dashboard |
 
-## アクション
+## Actions
 
-トリガー発火後に実行する処理を定義します：
+Define the operations to execute after a trigger fires:
 
-| アクション | 説明 |
-|-----------|------|
-| **Run Tests** | テストを実行 |
-| **Build** | ビルドを実行 |
-| **Deploy** | デプロイを実行 |
-| **Notify** | 通知を送信（Slack / Discord / Email） |
-| **AI Analyze** | AI にコードを分析させる |
-| **Create Issue** | 新しい Issue を自動作成 |
-| **Create PR** | PR を自動作成 |
+| Action | Description |
+|--------|-------------|
+| **Run Tests** | Execute tests |
+| **Build** | Execute a build |
+| **Deploy** | Execute a deployment |
+| **Notify** | Send a notification (Slack / Discord / Email) |
+| **AI Analyze** | Have AI analyze the code |
+| **Create Issue** | Automatically create a new issue |
+| **Create PR** | Automatically create a PR |
 
-## ワークフローの例
+## Workflow Examples
 
-### PR マージ後に自動テスト & 通知
+### Auto-Test & Notify After PR Merge
 
 ```
 [PR Merged]
   └─▶ [Run Tests]
-        ├─ 成功 → [Notify: Slack] "テスト成功 ✅"
-        └─ 失敗 → [Notify: Slack] "テスト失敗 ❌"
-                   └─▶ [Create Issue] "テスト修復が必要"
+        ├─ Success → [Notify: Slack] "Tests passed ✅"
+        └─ Failure → [Notify: Slack] "Tests failed ❌"
+                     └─▶ [Create Issue] "Test fix needed"
 ```
 
-### 定期的なセキュリティスキャン
+### Periodic Security Scan
 
 ```
-[Schedule: 毎週月曜 AM 9:00]
+[Schedule: Every Monday 9:00 AM]
   └─▶ [AI Analyze: security]
-        └─▶ [Create Issue] 検出された脆弱性ごとに Issue 作成
-              └─▶ [Notify: Email] セキュリティレポート送信
+        └─▶ [Create Issue] Create issue for each detected vulnerability
+              └─▶ [Notify: Email] Send security report
 ```
 
-### Issue 作成から完了までの完全自動化
+### Full Automation from Issue Creation to Completion
 
 ```
 [Issue Created: label="ados"]
-  └─▶ [AI で実装]
+  └─▶ [AI Implement]
         └─▶ [Run Tests]
-              ├─ 成功 → [Create PR]
-              │           └─▶ [Notify: Slack]
-              └─ 失敗 → [AI で修復] → [Run Tests] (ループ)
+              ├─ Success → [Create PR]
+              │             └─▶ [Notify: Slack]
+              └─ Failure → [AI Repair] → [Run Tests] (loop)
 ```
 
-## ダッシュボードでの使い方
+## Dashboard Usage
 
-1. **Workflows** タブに移動
-2. **新しいワークフロー** をクリック
-3. トリガーを選択
-4. アクションを追加・接続
-5. 条件分岐を設定（オプション）
-6. **保存** をクリック
+1. Navigate to the **Workflows** tab
+2. Click **New Workflow**
+3. Select a trigger
+4. Add and connect actions
+5. Configure conditional branches (optional)
+6. Click **Save**
 
-## ワークフローのステータス
+## Workflow Status
 
-| ステータス | 説明 |
-|-----------|------|
-| 🟢 Active | 有効で実行中 |
-| 🟡 Paused | 一時停止中 |
-| 🔴 Error | エラーで停止 |
-| ⚪ Draft | 下書き（未有効化） |
+| Status | Description |
+|--------|-------------|
+| 🟢 Active | Enabled and running |
+| 🟡 Paused | Temporarily paused |
+| 🔴 Error | Stopped due to error |
+| ⚪ Draft | Draft (not activated) |

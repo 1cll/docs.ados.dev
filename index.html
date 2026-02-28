@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ADOS Docs — AI DevOps Platform</title>
-  <meta name="description" content="ADOS の製品ドキュメント。セットアップ、設定、機能ガイド、API リファレンスをカバー。">
+  <meta name="description" content="ADOS product documentation. Covers setup, configuration, feature guides, and API reference.">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📖</text></svg>">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsify-themeable@0/dist/css/theme-simple-dark.css">
   <style>
@@ -78,24 +78,29 @@
   <script>
     window.$docsify = {
       name: '<a href="/"><span>ADOS</span> Docs</a>',
-      repo: 'https://github.com/1cll/ADOS',
       loadSidebar: true,
       loadNavbar: true,
       subMaxLevel: 3,
       auto2top: true,
+      alias: {
+        '/ru/(.*)': '/ru/$1',
+        '/ru/': '/ru/README.md',
+        '/ru/_sidebar.md': '/ru/_sidebar.md',
+        '/ru/_navbar.md': '/ru/_navbar.md',
+      },
       search: {
         paths: 'auto',
-        placeholder: 'ドキュメントを検索...',
-        noData: '見つかりませんでした',
+        placeholder: 'Search docs...',
+        noData: 'No results found',
         depth: 3,
       },
       copyCode: {
-        buttonText: 'コピー',
-        successText: 'コピーしました',
+        buttonText: 'Copy',
+        successText: 'Copied',
       },
       pagination: {
-        previousText: '← 前へ',
-        nextText: '次へ →',
+        previousText: '← Previous',
+        nextText: 'Next →',
         crossChapter: true,
       },
       themeColor: '#7c3aed',
