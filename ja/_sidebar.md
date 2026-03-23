@@ -21,6 +21,7 @@
   - [通知設定](ja/guides/notifications.md)
   - [オブザーバビリティ](ja/guides/observability.md)
   - [プライベートレジストリ](ja/guides/private-registry.md)
+  - [スケジュール実行](ja/guides/scheduled-tasks.md)
   - [copilot-instructions.md](ja/guides/writing-instructions.md)
 
 - **セルフホスト**
