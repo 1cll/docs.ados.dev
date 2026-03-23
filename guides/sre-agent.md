@@ -105,6 +105,7 @@ SRE Agent alerts can integrate with the notification system:
 - **Slack** — Instant channel notifications
 - **Discord** — Webhook notifications
 - **Email** — Alert emails
+- **Signal** — Secure messaging notifications
 
 See [Notification Settings](guides/notifications.md) for details.
 

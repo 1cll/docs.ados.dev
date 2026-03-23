@@ -78,6 +78,19 @@ ADOS で使用される環境変数の一覧です。
 | `SLACK_WEBHOOK_URL` | ❌ | Slack Incoming Webhook URL |
 | `DISCORD_WEBHOOK_URL` | ❌ | Discord Webhook URL |
 
+## インシデント通知（SMTP 経由の Email）
+
+| 変数 | 必須 | 説明 |
+|------|------|------|
+| `SMTP_HOST` | ❌ | SMTP サーバーのホスト名 |
+| `SMTP_PORT` | ❌ | SMTP サーバーのポート |
+| `SMTP_USERNAME` | ❌ | SMTP ユーザー名 |
+| `SMTP_PASSWORD` | ❌ | SMTP パスワード |
+| `SMTP_FROM` | ❌ | 送信元メールアドレス |
+
+> [!NOTE]
+> Firebase の「Trigger Email from Firestore」エクステンションが設定されている場合、ADOS はそれを主要な Email 配信方法として使用し、Firestore 書き込みが失敗した場合のみ直接 SMTP にフォールバックします。
+
 ## 設定例
 
 ### 最小構成

@@ -295,6 +295,91 @@ GET /copilot/models
 
 ---
 
+## Signal
+
+### QR コードの取得
+
+```http
+GET /signal/qrcode
+```
+
+Signal デバイスリンク用の QR コード画像を返します。
+
+### Signal ステータスの取得
+
+```http
+GET /signal/status
+```
+
+レスポンス：
+```json
+{
+  "status": "linked",
+  "container_age_days": 12
+}
+```
+
+### Signal コンテナの起動
+
+```http
+POST /signal/start
+```
+
+オーケストレーター上で signal-cli-rest-api コンテナを起動します。
+
+### Signal コンテナの停止
+
+```http
+POST /signal/stop
+```
+
+signal-cli-rest-api コンテナを停止します。
+
+### Signal テスト通知の送信
+
+```http
+POST /signal/send-test
+```
+
+---
+
+## インシデント通知
+
+### インシデント通知設定の取得
+
+```http
+GET /settings/incident-notifications
+```
+
+### インシデント通知設定の更新
+
+```http
+PUT /settings/incident-notifications
+Content-Type: application/json
+
+{
+  "email_enabled": true,
+  "email_to": ["admin@example.com"],
+  "webhook_enabled": true,
+  "webhook_url": "https://hooks.slack.com/...",
+  "signal_enabled": true,
+  "events": {
+    "github_token_expired": true,
+    "claude_token_expired": true,
+    "orchestrator_offline": true,
+    "runner_group_error": true
+  }
+}
+```
+
+### インシデントテスト通知の送信
+
+```http
+POST /settings/incident-notifications/test
+```
+
+---
+
 ## Webhook
 
 ### GitHub Webhook の受信

@@ -105,6 +105,7 @@ export GOOGLE_CLOUD_PROJECT=my-project-id
 - **Slack** — Мгновенные уведомления в канал
 - **Discord** — Webhook-уведомления
 - **Email** — Письма с оповещениями
+- **Signal** — Уведомления через защищённый мессенджер
 
 Подробности в [Настройки уведомлений](ru/guides/notifications.md).
 

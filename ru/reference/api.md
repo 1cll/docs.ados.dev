@@ -295,6 +295,91 @@ GET /copilot/models
 
 ---
 
+## Signal
+
+### Получить QR-код
+
+```http
+GET /signal/qrcode
+```
+
+Возвращает QR-код для привязки устройства Signal.
+
+### Получить статус Signal
+
+```http
+GET /signal/status
+```
+
+Ответ:
+```json
+{
+  "status": "linked",
+  "container_age_days": 12
+}
+```
+
+### Запустить Signal-контейнер
+
+```http
+POST /signal/start
+```
+
+Запускает контейнер signal-cli-rest-api на оркестраторе.
+
+### Остановить Signal-контейнер
+
+```http
+POST /signal/stop
+```
+
+Останавливает контейнер signal-cli-rest-api.
+
+### Отправить тестовое уведомление Signal
+
+```http
+POST /signal/send-test
+```
+
+---
+
+## Уведомления об инцидентах
+
+### Получить настройки уведомлений об инцидентах
+
+```http
+GET /settings/incident-notifications
+```
+
+### Обновить настройки уведомлений об инцидентах
+
+```http
+PUT /settings/incident-notifications
+Content-Type: application/json
+
+{
+  "email_enabled": true,
+  "email_to": ["admin@example.com"],
+  "webhook_enabled": true,
+  "webhook_url": "https://hooks.slack.com/...",
+  "signal_enabled": true,
+  "events": {
+    "github_token_expired": true,
+    "claude_token_expired": true,
+    "orchestrator_offline": true,
+    "runner_group_error": true
+  }
+}
+```
+
+### Отправить тестовое уведомление об инциденте
+
+```http
+POST /settings/incident-notifications/test
+```
+
+---
+
 ## Webhook
 
 ### Получение вебхука GitHub

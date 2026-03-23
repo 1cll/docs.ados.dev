@@ -295,6 +295,91 @@ GET /copilot/models
 
 ---
 
+## Signal
+
+### Get QR Code
+
+```http
+GET /signal/qrcode
+```
+
+Returns a QR code image for linking a Signal device.
+
+### Get Signal Status
+
+```http
+GET /signal/status
+```
+
+Response:
+```json
+{
+  "status": "linked",
+  "container_age_days": 12
+}
+```
+
+### Start Signal Container
+
+```http
+POST /signal/start
+```
+
+Starts the signal-cli-rest-api container on the orchestrator.
+
+### Stop Signal Container
+
+```http
+POST /signal/stop
+```
+
+Stops the signal-cli-rest-api container.
+
+### Send Test Signal Notification
+
+```http
+POST /signal/send-test
+```
+
+---
+
+## Incident Notifications
+
+### Get Incident Notification Settings
+
+```http
+GET /settings/incident-notifications
+```
+
+### Update Incident Notification Settings
+
+```http
+PUT /settings/incident-notifications
+Content-Type: application/json
+
+{
+  "email_enabled": true,
+  "email_to": ["admin@example.com"],
+  "webhook_enabled": true,
+  "webhook_url": "https://hooks.slack.com/...",
+  "signal_enabled": true,
+  "events": {
+    "github_token_expired": true,
+    "claude_token_expired": true,
+    "orchestrator_offline": true,
+    "runner_group_error": true
+  }
+}
+```
+
+### Send Test Incident Notification
+
+```http
+POST /settings/incident-notifications/test
+```
+
+---
+
 ## Webhook
 
 ### Receive GitHub Webhook

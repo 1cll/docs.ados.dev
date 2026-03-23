@@ -56,9 +56,15 @@ Visualizes AI agent token usage and costs.
 
 ### Notification Settings
 
-- Slack / Discord / Email notification configuration
+- Slack / Discord / Email / Signal notification configuration
 - Notification rules (severity filtering)
 - Send test notifications
+
+### Incident Notification Settings
+
+- Per-event toggles for critical system alerts (token expiry, orchestrator offline, etc.)
+- Email (SMTP or Firebase), Webhook, and Signal channels
+- Deduplication — each incident notified only once until resolved
 
 ### Billing Management
 

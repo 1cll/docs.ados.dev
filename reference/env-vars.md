@@ -78,6 +78,19 @@ A list of environment variables used by ADOS.
 | `SLACK_WEBHOOK_URL` | ❌ | Slack Incoming Webhook URL |
 | `DISCORD_WEBHOOK_URL` | ❌ | Discord Webhook URL |
 
+## Incident Notifications (Email via SMTP)
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `SMTP_HOST` | ❌ | SMTP server hostname |
+| `SMTP_PORT` | ❌ | SMTP server port |
+| `SMTP_USERNAME` | ❌ | SMTP username |
+| `SMTP_PASSWORD` | ❌ | SMTP password |
+| `SMTP_FROM` | ❌ | Sender email address |
+
+> [!NOTE]
+> If Firebase's "Trigger Email from Firestore" extension is configured, ADOS uses it as the primary email delivery method and falls back to direct SMTP only if the Firestore write fails.
+
 ## Configuration Examples
 
 ### Minimal Configuration

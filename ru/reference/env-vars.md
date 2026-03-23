@@ -78,6 +78,19 @@
 | `SLACK_WEBHOOK_URL` | ❌ | URL Slack Incoming Webhook |
 | `DISCORD_WEBHOOK_URL` | ❌ | URL Discord Webhook |
 
+## Уведомления об инцидентах (Email через SMTP)
+
+| Переменная | Обязательна | Описание |
+|------------|-------------|----------|
+| `SMTP_HOST` | ❌ | Имя хоста SMTP-сервера |
+| `SMTP_PORT` | ❌ | Порт SMTP-сервера |
+| `SMTP_USERNAME` | ❌ | Имя пользователя SMTP |
+| `SMTP_PASSWORD` | ❌ | Пароль SMTP |
+| `SMTP_FROM` | ❌ | Адрес отправителя |
+
+> [!NOTE]
+> Если расширение Firebase «Trigger Email from Firestore» настроено, ADOS использует его как основной способ отправки email и переключается на прямой SMTP только при сбое записи в Firestore.
+
 ## Примеры конфигурации
 
 ### Минимальная конфигурация
