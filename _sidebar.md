@@ -20,6 +20,7 @@
   - [Workflows](guides/workflows.md)
   - [Notifications](guides/notifications.md)
   - [Observability](guides/observability.md)
+  - [Private Registry](guides/private-registry.md)
   - [copilot-instructions.md](guides/writing-instructions.md)
 
 - **Self-Hosting**

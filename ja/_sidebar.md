@@ -20,6 +20,7 @@
   - [ワークフロー](ja/guides/workflows.md)
   - [通知設定](ja/guides/notifications.md)
   - [オブザーバビリティ](ja/guides/observability.md)
+  - [プライベートレジストリ](ja/guides/private-registry.md)
   - [copilot-instructions.md](ja/guides/writing-instructions.md)
 
 - **セルフホスト**

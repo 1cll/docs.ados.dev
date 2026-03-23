@@ -20,6 +20,7 @@
   - [Рабочие процессы](ru/guides/workflows.md)
   - [Уведомления](ru/guides/notifications.md)
   - [Наблюдаемость](ru/guides/observability.md)
+  - [Приватный реестр](ru/guides/private-registry.md)
   - [copilot-instructions.md](ru/guides/writing-instructions.md)
 
 - **Самостоятельный хостинг**
