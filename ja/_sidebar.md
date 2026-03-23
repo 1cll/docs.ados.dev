@@ -19,6 +19,7 @@
   - [Agentic Chat](ja/guides/agentic-chat.md)
   - [ワークフロー](ja/guides/workflows.md)
   - [通知設定](ja/guides/notifications.md)
+  - [オブザーバビリティ](ja/guides/observability.md)
   - [copilot-instructions.md](ja/guides/writing-instructions.md)
 
 - **セルフホスト**
