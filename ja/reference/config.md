@@ -7,6 +7,18 @@ ADOS の設定は `ados.yaml` ファイルで管理します。ダッシュボ�
 ```yaml
 # ados.yaml - ADOS 設定ファイル
 
+# インスタンス＆テナント設定
+instance_id: "${HOSTNAME}"          # インスタンス識別子（${HOSTNAME} 変数をサポート）
+tenant_id: acme-corp                # マルチテナント用テナント ID（必須）
+
+# Firestore 設定
+firestore:
+  project_id: my-gcp-project       # Firestore 用 GCP プロジェクト ID（必須）
+  emulator_host: "localhost:8086"   # ローカル開発用 Firestore エミュレータホスト
+
+# ヘルスチェック
+health_check_port: 8080             # ヘルスチェック HTTP ポート
+
 # リポジトリ設定
 repos:
   - name: my-backend             # 表示名
@@ -24,11 +36,33 @@ repos:
       - codex
     execution_preference: auto    # 実行環境（auto / cloud / self-hosted）
     work_runner_group: ""         # Runner グループ名
-    merge_mode: pr                # マージモード（pr / direct）
-    auto_merge: false             # CI パス後に PR を自動マージ
-    auto_close_issue: true        # PR マージ後に Issue を自動クローズ
     vcs_provider: github          # VCS（github / gitlab / bitbucket）
     vcs_base_url: ""              # カスタム VCS URL
+    instructions: ".github/copilot-instructions.md"  # copilot-instructions.md のパス
+    priority_labels:              # 優先度処理用ラベル
+      - hotfix
+      - urgent
+      - critical
+    auto_close_issue: true        # PR マージ後に Issue を自動クローズ
+    merge_mode: pr                # "pr" は PR を作成（デフォルト）、"direct" は target_branch に直接プッシュ
+    auto_merge: false             # CI パス後に PR を自動マージ
+
+    # テンプレートバリデーション
+    template_validation:
+      enabled: true               # Issue テンプレートバリデーションの有効化
+      strict_mode: false          # 必須フィールドが欠落した Issue を拒否
+
+    # 分類器設定 - 複雑度からエージェントへのマッピング
+    classifier_config:
+      simple:
+        agent: copilot
+        fallbacks: [claude]
+      medium:
+        agent: claude
+        fallbacks: [copilot]
+      complex:
+        agent: claude
+        fallbacks: []
 
     # Worker 設定
     workers:
@@ -38,6 +72,7 @@ repos:
         enabled: true             # Pipeline 監視の有効/無効
       scheduled_watcher:
         enabled: false            # スケジュール Watcher
+      health_cache_ttl: 30m       # ヘルスチェッククールダウンの TTL
       sre_agent:
         enabled: true             # SRE エージェントの有効/無効
         gcloud_projects:          # 監視する GCP プロジェクト（名前 → project_id のマッピング）
@@ -71,11 +106,20 @@ agents:
   per_repo_min: 1                # リポジトリごとの最低数
   per_repo_max: 3                # リポジトリごとの最大数
   lock_ttl: 45m                  # ロック TTL
-  definitions:                   # カスタムエージェント定義
-    - name: claude-custom
-      agent: claude
-      model: claude-opus-4
-      description: "高難度タスク用"
+  definitions:                   # エージェント定義（名前 -> 設定のマップ）
+    copilot:
+      command: copilot
+      default_model: claude-opus-4.6
+      timeout: 30m
+      allow_flags:
+        - --allow-all-tools
+      deny_flags:
+        - --deny-tool
+        - "shell(sudo)"
+    claude:
+      command: claude
+      default_model: opus
+      timeout: 45m
 
 # ジョブ設定
 job:
@@ -96,9 +140,55 @@ routing:
   fallback:
     - claude
     - copilot
+
+# ログ設定
+logging:
+  format: json                   # json | text
+  level: info                    # debug | info | warn | error
+  file: ~/.ados/logs/ados.log
+  max_size_mb: 50
+  max_backups: 5
+
+# 通知設定
+notifications:
+  email:
+    provider: sendgrid           # sendgrid | ses
+    api_key: "${SENDGRID_API_KEY}"
+    from: "alerts@your-domain.com"
+    to:
+      - "admin@your-domain.com"
+    enabled: false
+  rules:
+    - event_types:
+        - "job.failed_repeated"
+        - "job.needs_human"
+      severity:
+        - "critical"
+      channels:
+        - "email"
 ```
 
 ## セクション詳細
+
+### トップレベル
+
+| フィールド | 型 | デフォルト | 説明 |
+|-----------|------|---------|------|
+| `instance_id` | string | `""` | インスタンス識別子。`${HOSTNAME}` 変数をサポート |
+| `tenant_id` | string | 必須 | マルチテナント用テナント ID |
+
+### firestore
+
+| フィールド | 型 | デフォルト | 説明 |
+|-----------|------|---------|------|
+| `project_id` | string | 必須 | Firestore 用 GCP プロジェクト ID |
+| `emulator_host` | string | `""` | ローカル開発用 Firestore エミュレータホスト |
+
+### health_check_port
+
+| フィールド | 型 | デフォルト | 説明 |
+|-----------|------|---------|------|
+| `health_check_port` | int | `8080` | ヘルスチェック HTTP ポート |
 
 ### repos[]
 
@@ -117,14 +207,31 @@ routing:
 | `fallback_agents` | []string | `[]` | フォールバック順序 |
 | `execution_preference` | string | `"auto"` | 実行環境（`auto` / `cloud` / `self-hosted`） |
 | `work_runner_group` | string | `""` | Runner グループ |
-| `merge_mode` | string | `"pr"` | マージモード（`pr` = PR 作成、`direct` = 直接プッシュ） |
-| `auto_merge` | bool | `false` | CI パス後に PR を自動マージ |
-| `auto_close_issue` | bool | `true` | PR マージ後に Issue を自動クローズ |
 | `vcs_provider` | string | `"github"` | VCS プロバイダー |
 | `vcs_base_url` | string | `""` | カスタム URL |
+| `instructions` | string | `""` | copilot-instructions.md のパス |
+| `priority_labels` | []string | `[]` | 優先度処理用ラベル（例: hotfix, urgent, critical） |
+| `auto_close_issue` | bool | `true` | PR マージ後に Issue を自動クローズ |
+| `merge_mode` | string | `"pr"` | `"pr"` は PR を作成（デフォルト）、`"direct"` は target_branch に直接プッシュ |
+| `auto_merge` | bool | `false` | CI パス後に PR を自動マージ |
 
-> [!NOTE]
 > `execution_preference: "auto"`（デフォルト）は、セルフホステッドランナーが利用可能であればそちらを使用し、なければクラウド実行にフォールバックします。
+
+### repos[].template_validation
+
+| フィールド | 型 | デフォルト | 説明 |
+|-----------|------|---------|------|
+| `enabled` | bool | `true` | Issue テンプレートバリデーションの有効化 |
+| `strict_mode` | bool | `false` | 必須フィールドが欠落した Issue を拒否 |
+
+### repos[].classifier_config
+
+複雑度からエージェントへのマッピング。各ティア（`simple`、`medium`、`complex`）は以下をサポート：
+
+| フィールド | 型 | デフォルト | 説明 |
+|-----------|------|---------|------|
+| `agent` | string | `""` | この複雑度ティアに割り当てるエージェント |
+| `fallbacks` | []string | `[]` | このティアのフォールバックエージェント |
 
 ### repos[].workers
 
@@ -133,6 +240,7 @@ routing:
 | `issue_watcher.enabled` | bool | `true` | Issue 監視 |
 | `pipeline_watcher.enabled` | bool | `false` | Pipeline 監視 |
 | `scheduled_watcher.enabled` | bool | `false` | スケジュール監視 |
+| `health_cache_ttl` | duration | `"30m"` | ヘルスチェッククールダウンの TTL |
 
 ### repos[].workers.sre_agent
 
@@ -151,7 +259,7 @@ routing:
 |-----------|------|---------|------|
 | `enabled` | bool | `false` | AutoPilot の有効/無効 |
 | `min_open_issues` | int | `1` | 開始に必要な最低オープン Issue 数 |
-| `max_per_cycle` | int | `3` | 1 サイクルあたりの最大数 |
+| `max_per_cycle` | int | `5` | 1 サイクルあたりの最大数 |
 | `max_per_day` | int | `10` | 1 日あたりの最大数 |
 | `check_interval` | duration | `"10m"` | チェック間隔 |
 | `cooldown` | duration | `"1h"` | クールダウン |
@@ -170,6 +278,18 @@ routing:
 | `per_repo_max` | int | `3` | リポジトリごとの最大数 |
 | `lock_ttl` | duration | `"45m"` | ロック TTL |
 
+### agents.definitions
+
+エージェント定義はエージェント名をキーとしたマップです。各エントリは以下をサポート：
+
+| フィールド | 型 | デフォルト | 説明 |
+|-----------|------|---------|------|
+| `command` | string | 必須 | 呼び出す CLI コマンド |
+| `default_model` | string | `""` | このエージェントのデフォルトモデル |
+| `timeout` | duration | `"30m"` | 実行タイムアウト |
+| `allow_flags` | []string | `[]` | 許可するフラグ |
+| `deny_flags` | []string | `[]` | 拒否するフラグ |
+
 ### routing
 
 | フィールド | 型 | 説明 |
@@ -179,3 +299,39 @@ routing:
 | `rules[].agent` | string | 使用するエージェント |
 | `rules[].model` | string | 使用するモデル |
 | `fallback` | []string | ルールにマッチしない場合のフォールバック |
+
+### logging
+
+| フィールド | 型 | デフォルト | 説明 |
+|-----------|------|---------|------|
+| `format` | string | `"json"` | ログフォーマット（`json` または `text`） |
+| `level` | string | `"info"` | ログレベル（`debug`、`info`、`warn`、`error`） |
+| `file` | string | `"~/.ados/logs/ados.log"` | ログファイルパス |
+| `max_size_mb` | int | `50` | ログファイルの最大サイズ（MB） |
+| `max_backups` | int | `5` | ログバックアップファイルの最大数 |
+
+### notifications
+
+| フィールド | 型 | デフォルト | 説明 |
+|-----------|------|---------|------|
+| `email.provider` | string | `""` | メールプロバイダー（`sendgrid` または `ses`） |
+| `email.api_key` | string | `""` | API キー（環境変数の代入をサポート） |
+| `email.from` | string | `""` | 送信元メールアドレス |
+| `email.to` | []string | `[]` | 送信先メールアドレス |
+| `email.enabled` | bool | `false` | メール通知の有効/無効 |
+
+### notifications.rules[]
+
+| フィールド | 型 | デフォルト | 説明 |
+|-----------|------|---------|------|
+| `event_types` | []string | `[]` | マッチするイベントタイプ（例: `job.failed_repeated`、`job.needs_human`） |
+| `severity` | []string | `[]` | マッチする重要度レベル（例: `critical`） |
+| `channels` | []string | `[]` | 使用する通知チャネル（例: `email`） |
+
+## 設定の検証
+
+CLI で設定ファイルの構文を検証できます：
+
+```bash
+ados config validate --config ados.yaml
+```

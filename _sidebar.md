@@ -19,6 +19,9 @@
   - [Agentic Chat](guides/agentic-chat.md)
   - [Workflows](guides/workflows.md)
   - [Notifications](guides/notifications.md)
+  - [Observability](guides/observability.md)
+  - [Private Registry](guides/private-registry.md)
+  - [Scheduled Tasks](guides/scheduled-tasks.md)
   - [copilot-instructions.md](guides/writing-instructions.md)
 
 - **Self-Hosting**

@@ -7,6 +7,18 @@
 ```yaml
 # ados.yaml - Файл конфигурации ADOS
 
+# Настройки экземпляра и арендатора
+instance_id: "${HOSTNAME}"          # Идентификатор экземпляра (поддерживает переменную ${HOSTNAME})
+tenant_id: acme-corp                # ID арендатора для мультитенантности (обязательно)
+
+# Настройки Firestore
+firestore:
+  project_id: my-gcp-project       # ID проекта GCP для Firestore (обязательно)
+  emulator_host: "localhost:8086"   # Хост эмулятора Firestore для локальной разработки
+
+# Проверка состояния
+health_check_port: 8080             # HTTP-порт проверки состояния
+
 # Настройки репозиториев
 repos:
   - name: my-backend             # Отображаемое имя
@@ -24,11 +36,33 @@ repos:
       - codex
     execution_preference: auto    # Среда выполнения (auto / cloud / self-hosted)
     work_runner_group: ""         # Имя группы Runner
-    merge_mode: pr                # Режим слияния (pr / direct)
-    auto_merge: false             # Авто-слияние PR при прохождении CI
-    auto_close_issue: true        # Авто-закрытие issue после слияния PR
     vcs_provider: github          # VCS (github / gitlab / bitbucket)
     vcs_base_url: ""              # Пользовательский URL VCS
+    instructions: ".github/copilot-instructions.md"  # Путь к copilot-instructions.md
+    priority_labels:              # Метки для приоритетной обработки
+      - hotfix
+      - urgent
+      - critical
+    auto_close_issue: true        # Автоматически закрывать Issue после слияния PR
+    merge_mode: pr                # "pr" создаёт PR (по умолчанию), "direct" пушит в target_branch напрямую
+    auto_merge: false             # Авто-слияние PR при прохождении CI
+
+    # Валидация шаблонов
+    template_validation:
+      enabled: true               # Включить валидацию шаблонов Issue
+      strict_mode: false          # Отклонять Issue с отсутствующими обязательными полями
+
+    # Конфигурация классификатора — сопоставление сложности с агентом
+    classifier_config:
+      simple:
+        agent: copilot
+        fallbacks: [claude]
+      medium:
+        agent: claude
+        fallbacks: [copilot]
+      complex:
+        agent: claude
+        fallbacks: []
 
     # Настройки воркеров
     workers:
@@ -38,6 +72,7 @@ repos:
         enabled: true             # Включить/выключить мониторинг Pipeline
       scheduled_watcher:
         enabled: false            # Запланированный Watcher
+      health_cache_ttl: 30m       # TTL для охлаждения проверки состояния
       sre_agent:
         enabled: true             # Включить/выключить SRE-агент
         gcloud_projects:          # GCP-проекты для мониторинга (имя → project_id)
@@ -71,11 +106,20 @@ agents:
   per_repo_min: 1                # Минимум на репозиторий
   per_repo_max: 3                # Максимум на репозиторий
   lock_ttl: 45m                  # TTL блокировки
-  definitions:                   # Пользовательские определения агентов
-    - name: claude-custom
-      agent: claude
-      model: claude-opus-4
-      description: "Для задач высокой сложности"
+  definitions:                   # Определения агентов (карта имя -> конфигурация)
+    copilot:
+      command: copilot
+      default_model: claude-opus-4.6
+      timeout: 30m
+      allow_flags:
+        - --allow-all-tools
+      deny_flags:
+        - --deny-tool
+        - "shell(sudo)"
+    claude:
+      command: claude
+      default_model: opus
+      timeout: 45m
 
 # Настройки задания
 job:
@@ -96,9 +140,55 @@ routing:
   fallback:
     - claude
     - copilot
+
+# Настройки логирования
+logging:
+  format: json                   # json | text
+  level: info                    # debug | info | warn | error
+  file: ~/.ados/logs/ados.log
+  max_size_mb: 50
+  max_backups: 5
+
+# Настройки уведомлений
+notifications:
+  email:
+    provider: sendgrid           # sendgrid | ses
+    api_key: "${SENDGRID_API_KEY}"
+    from: "alerts@your-domain.com"
+    to:
+      - "admin@your-domain.com"
+    enabled: false
+  rules:
+    - event_types:
+        - "job.failed_repeated"
+        - "job.needs_human"
+      severity:
+        - "critical"
+      channels:
+        - "email"
 ```
 
 ## Описание секций
+
+### Верхний уровень
+
+| Поле | Тип | По умолчанию | Описание |
+|------|-----|-------------|----------|
+| `instance_id` | string | `""` | Идентификатор экземпляра. Поддерживает переменную `${HOSTNAME}` |
+| `tenant_id` | string | Обязательно | ID арендатора для мультитенантности |
+
+### firestore
+
+| Поле | Тип | По умолчанию | Описание |
+|------|-----|-------------|----------|
+| `project_id` | string | Обязательно | ID проекта GCP для Firestore |
+| `emulator_host` | string | `""` | Хост эмулятора Firestore для локальной разработки |
+
+### health_check_port
+
+| Поле | Тип | По умолчанию | Описание |
+|------|-----|-------------|----------|
+| `health_check_port` | int | `8080` | HTTP-порт проверки состояния |
 
 ### repos[]
 
@@ -117,14 +207,31 @@ routing:
 | `fallback_agents` | []string | `[]` | Порядок fallback |
 | `execution_preference` | string | `"auto"` | Среда выполнения (`auto` / `cloud` / `self-hosted`) |
 | `work_runner_group` | string | `""` | Группа Runner |
-| `merge_mode` | string | `"pr"` | Режим слияния (`pr` = создание PR, `direct` = прямой push) |
-| `auto_merge` | bool | `false` | Авто-слияние PR при прохождении CI |
-| `auto_close_issue` | bool | `true` | Авто-закрытие issue после слияния PR |
 | `vcs_provider` | string | `"github"` | VCS-провайдер |
 | `vcs_base_url` | string | `""` | Пользовательский URL |
+| `instructions` | string | `""` | Путь к copilot-instructions.md |
+| `priority_labels` | []string | `[]` | Метки для приоритетной обработки (напр. hotfix, urgent, critical) |
+| `auto_close_issue` | bool | `true` | Автоматически закрывать Issue после слияния PR |
+| `merge_mode` | string | `"pr"` | `"pr"` создаёт PR (по умолчанию), `"direct"` пушит в target_branch напрямую |
+| `auto_merge` | bool | `false` | Авто-слияние PR при прохождении CI |
 
-> [!NOTE]
 > `execution_preference: "auto"` (по умолчанию) будет использовать self-hosted runner при его доступности, с fallback на облачное выполнение.
+
+### repos[].template_validation
+
+| Поле | Тип | По умолчанию | Описание |
+|------|-----|-------------|----------|
+| `enabled` | bool | `true` | Включить валидацию шаблонов Issue |
+| `strict_mode` | bool | `false` | Отклонять Issue с отсутствующими обязательными полями |
+
+### repos[].classifier_config
+
+Сопоставление сложности с агентом. Каждый уровень (`simple`, `medium`, `complex`) поддерживает:
+
+| Поле | Тип | По умолчанию | Описание |
+|------|-----|-------------|----------|
+| `agent` | string | `""` | Агент для данного уровня сложности |
+| `fallbacks` | []string | `[]` | Резервные агенты для данного уровня |
 
 ### repos[].workers
 
@@ -133,6 +240,7 @@ routing:
 | `issue_watcher.enabled` | bool | `true` | Мониторинг Issue |
 | `pipeline_watcher.enabled` | bool | `false` | Мониторинг Pipeline |
 | `scheduled_watcher.enabled` | bool | `false` | Запланированный мониторинг |
+| `health_cache_ttl` | duration | `"30m"` | TTL для охлаждения проверки состояния |
 
 ### repos[].workers.sre_agent
 
@@ -151,7 +259,7 @@ routing:
 |------|-----|-------------|----------|
 | `enabled` | bool | `false` | Включить/выключить AutoPilot |
 | `min_open_issues` | int | `1` | Мин. открытых Issue для запуска |
-| `max_per_cycle` | int | `3` | Макс. за цикл |
+| `max_per_cycle` | int | `5` | Макс. за цикл |
 | `max_per_day` | int | `10` | Макс. в день |
 | `check_interval` | duration | `"10m"` | Интервал проверки |
 | `cooldown` | duration | `"1h"` | Охлаждение |
@@ -170,6 +278,18 @@ routing:
 | `per_repo_max` | int | `3` | Максимум на репозиторий |
 | `lock_ttl` | duration | `"45m"` | TTL блокировки |
 
+### agents.definitions
+
+Определения агентов — это карта с ключом по имени агента. Каждая запись поддерживает:
+
+| Поле | Тип | По умолчанию | Описание |
+|------|-----|-------------|----------|
+| `command` | string | Обязательно | CLI-команда для вызова |
+| `default_model` | string | `""` | Модель по умолчанию для данного агента |
+| `timeout` | duration | `"30m"` | Тайм-аут выполнения |
+| `allow_flags` | []string | `[]` | Разрешённые флаги |
+| `deny_flags` | []string | `[]` | Запрещённые флаги |
+
 ### routing
 
 | Поле | Тип | Описание |
@@ -179,3 +299,39 @@ routing:
 | `rules[].agent` | string | Используемый агент |
 | `rules[].model` | string | Используемая модель |
 | `fallback` | []string | Fallback при отсутствии совпадений |
+
+### logging
+
+| Поле | Тип | По умолчанию | Описание |
+|------|-----|-------------|----------|
+| `format` | string | `"json"` | Формат логов (`json` или `text`) |
+| `level` | string | `"info"` | Уровень логирования (`debug`, `info`, `warn`, `error`) |
+| `file` | string | `"~/.ados/logs/ados.log"` | Путь к файлу логов |
+| `max_size_mb` | int | `50` | Макс. размер файла логов в МБ |
+| `max_backups` | int | `5` | Макс. количество резервных копий логов |
+
+### notifications
+
+| Поле | Тип | По умолчанию | Описание |
+|------|-----|-------------|----------|
+| `email.provider` | string | `""` | Провайдер email (`sendgrid` или `ses`) |
+| `email.api_key` | string | `""` | API-ключ (поддерживает подстановку переменных окружения) |
+| `email.from` | string | `""` | Адрес отправителя |
+| `email.to` | []string | `[]` | Адреса получателей |
+| `email.enabled` | bool | `false` | Включить/выключить email-уведомления |
+
+### notifications.rules[]
+
+| Поле | Тип | По умолчанию | Описание |
+|------|-----|-------------|----------|
+| `event_types` | []string | `[]` | Типы событий для сопоставления (напр. `job.failed_repeated`, `job.needs_human`) |
+| `severity` | []string | `[]` | Уровни серьёзности для сопоставления (напр. `critical`) |
+| `channels` | []string | `[]` | Каналы уведомлений (напр. `email`) |
+
+## Проверка конфигурации
+
+Синтаксис файла конфигурации можно проверить с помощью CLI:
+
+```bash
+ados config validate --config ados.yaml
+```

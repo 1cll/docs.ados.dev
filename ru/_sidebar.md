@@ -19,6 +19,9 @@
   - [Agentic Chat](ru/guides/agentic-chat.md)
   - [Рабочие процессы](ru/guides/workflows.md)
   - [Уведомления](ru/guides/notifications.md)
+  - [Наблюдаемость](ru/guides/observability.md)
+  - [Приватный реестр](ru/guides/private-registry.md)
+  - [Запланированные задачи](ru/guides/scheduled-tasks.md)
   - [copilot-instructions.md](ru/guides/writing-instructions.md)
 
 - **Самостоятельный хостинг**
