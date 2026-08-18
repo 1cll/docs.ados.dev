@@ -19,13 +19,16 @@ Agentic Chat は、リポジトリのコンテキストを理解した AI とリ
 2. チャットアイコンをクリック
 3. 自然言語でリクエストを入力
 
-### CLI から
+### セルフホスト Work Runner から
+
+Agentic Chat は Work Runner が `chat` または `all` モードで動作している場合に利用できます：
 
 ```bash
-# Agentic Chat モードで起動
-export ADOS_MODE=chat
-ados start
+# Work Runner の環境変数で ADOS_MODE=chat または ADOS_MODE=all を設定
+ADOS_MODE=chat
 ```
+
+詳細は [Work Runner セットアップ](ja/self-host/work-runner.md) を参照してください。
 
 ## 会話例
 

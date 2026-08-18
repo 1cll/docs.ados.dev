@@ -19,13 +19,16 @@ Unlike typical AI chat, Agentic Chat can:
 2. Click the chat icon
 3. Enter your request in natural language
 
-### From the CLI
+### From Self-Hosted Work Runner
+
+Agentic Chat is available when the Work Runner is running in `chat` or `all` mode:
 
 ```bash
-# Start in Agentic Chat mode
-export ADOS_MODE=chat
-ados start
+# Set ADOS_MODE=chat or ADOS_MODE=all in your Work Runner environment
+ADOS_MODE=chat
 ```
+
+See [Work Runner Setup](self-host/work-runner.md) for details.
 
 ## Conversation Examples
 

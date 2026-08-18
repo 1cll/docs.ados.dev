@@ -42,6 +42,7 @@ Run Work Runner on your own servers or CI environment.
 | `ADOS_CPUS` | ❌ | Number of CPU cores to use |
 | `ADOS_MEMORY` | ❌ | Memory limit |
 | `ADOS_HOSTNAME` | ❌ | Hostname (for identification) |
+| `ADOS_DEPLOY_ID` | ❌ | Deploy ID (identifies deployment) |
 | `ADOS_TENANT_ID` | ❌ | Tenant ID |
 | `GITHUB_TOKEN` | ✅ | GitHub access token |
 | `ANTHROPIC_API_KEY` | ❌ | Claude API key |
@@ -60,7 +61,7 @@ docker run -d \
   -e ANTHROPIC_API_KEY=sk-ant-xxxx \
   -v /var/run/docker.sock:/var/run/docker.sock \
   -v ados-workspace:/workspace \
-  ghcr.io/1cll/ados-work-runner:latest
+  asia-northeast1-docker.pkg.dev/ados-platform/ados/ados-work-runner:latest
 ```
 
 ### Start with Docker Compose
@@ -69,7 +70,7 @@ docker run -d \
 version: '3.8'
 services:
   work-runner:
-    image: ghcr.io/1cll/ados-work-runner:latest
+    image: asia-northeast1-docker.pkg.dev/ados-platform/ados/ados-work-runner:latest
     environment:
       - ADOS_API_URL=https://api.ados.dev
       - ADOS_TOKEN=${ADOS_TOKEN}

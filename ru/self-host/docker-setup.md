@@ -46,7 +46,7 @@ version: '3.8'
 services:
   # Work Runner - Основной процесс
   work-runner:
-    image: ghcr.io/1cll/ados-work-runner:latest
+    image: asia-northeast1-docker.pkg.dev/ados-platform/ados/ados-work-runner:latest
     container_name: ados-work-runner
     environment:
       - ADOS_API_URL=https://api.ados.dev
@@ -78,7 +78,7 @@ version: '3.8'
 
 services:
   runner-1:
-    image: ghcr.io/1cll/ados-work-runner:latest
+    image: asia-northeast1-docker.pkg.dev/ados-platform/ados/ados-work-runner:latest
     container_name: ados-runner-1
     environment:
       - ADOS_RUNNER_ID=runner-001
@@ -89,7 +89,7 @@ services:
       - workspace-1:/workspace
 
   runner-2:
-    image: ghcr.io/1cll/ados-work-runner:latest
+    image: asia-northeast1-docker.pkg.dev/ados-platform/ados/ados-work-runner:latest
     container_name: ados-runner-2
     environment:
       - ADOS_RUNNER_ID=runner-002
@@ -99,7 +99,7 @@ services:
       - workspace-2:/workspace
 
   runner-gpu:
-    image: ghcr.io/1cll/ados-work-runner:latest
+    image: asia-northeast1-docker.pkg.dev/ados-platform/ados/ados-work-runner:latest
     container_name: ados-runner-gpu
     environment:
       - ADOS_RUNNER_ID=runner-gpu-001
@@ -163,7 +163,7 @@ docker logs --tail 100 ados-work-runner
 
 ```bash
 # Загрузка последнего образа
-docker pull ghcr.io/1cll/ados-work-runner:latest
+docker pull asia-northeast1-docker.pkg.dev/ados-platform/ados/ados-work-runner:latest
 
 # Пересоздание контейнера
 docker compose up -d --force-recreate

@@ -42,6 +42,7 @@ Work Runner выполняет следующие задачи:
 | `ADOS_CPUS` | ❌ | Количество ядер CPU |
 | `ADOS_MEMORY` | ❌ | Ограничение памяти |
 | `ADOS_HOSTNAME` | ❌ | Имя хоста (для идентификации) |
+| `ADOS_DEPLOY_ID` | ❌ | Deploy ID (идентификация деплоя) |
 | `ADOS_TENANT_ID` | ❌ | ID тенанта |
 | `GITHUB_TOKEN` | ✅ | Токен доступа GitHub |
 | `ANTHROPIC_API_KEY` | ❌ | API-ключ Claude |
@@ -60,7 +61,7 @@ docker run -d \
   -e ANTHROPIC_API_KEY=sk-ant-xxxx \
   -v /var/run/docker.sock:/var/run/docker.sock \
   -v ados-workspace:/workspace \
-  ghcr.io/1cll/ados-work-runner:latest
+  asia-northeast1-docker.pkg.dev/ados-platform/ados/ados-work-runner:latest
 ```
 
 ### Запуск через Docker Compose
@@ -69,7 +70,7 @@ docker run -d \
 version: '3.8'
 services:
   work-runner:
-    image: ghcr.io/1cll/ados-work-runner:latest
+    image: asia-northeast1-docker.pkg.dev/ados-platform/ados/ados-work-runner:latest
     environment:
       - ADOS_API_URL=https://api.ados.dev
       - ADOS_TOKEN=${ADOS_TOKEN}

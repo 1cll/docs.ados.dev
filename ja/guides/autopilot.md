@@ -21,9 +21,9 @@ repos:
         enabled: true
         min_open_issues: 1          # 最低 1 件の Issue でスタート
         max_per_cycle: 3            # 1 サイクルあたり最大 3 件
-        max_per_day: 20             # 1 日あたり最大 20 件
+        max_per_day: 10             # 1 日あたり最大 10 件
         check_interval: 10m         # チェック間隔
-        cooldown: 30m               # サイクル間のクールダウン
+        cooldown: 1h               # サイクル間のクールダウン
         priority_filter:            # 処理する優先度
           - high
           - medium
@@ -39,10 +39,10 @@ repos:
 |-----------|------|---------|------|
 | `enabled` | bool | `false` | AutoPilot の有効/無効 |
 | `min_open_issues` | int | `1` | スタートに必要な最低 Issue 数 |
-| `max_per_cycle` | int | `5` | 1 サイクルで処理する最大件数 |
-| `max_per_day` | int | `50` | 1 日で処理する最大件数 |
+| `max_per_cycle` | int | `3` | 1 サイクルで処理する最大件数 |
+| `max_per_day` | int | `10` | 1 日で処理する最大件数 |
 | `check_interval` | duration | `10m` | Issue チェック間隔 |
-| `cooldown` | duration | `30m` | サイクル間の待機時間 |
+| `cooldown` | duration | `1h` | サイクル間の待機時間 |
 | `priority_filter` | []string | `["*"]` | 処理する優先度 |
 | `category_filter` | []string | `["*"]` | 処理するカテゴリ |
 | `require_approval` | bool | `false` | マージ前に承認を要求 |

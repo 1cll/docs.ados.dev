@@ -21,9 +21,9 @@ repos:
         enabled: true
         min_open_issues: 1          # Запуск при наличии хотя бы 1 задачи
         max_per_cycle: 3            # Макс. задач за цикл
-        max_per_day: 20             # Макс. задач за день
+        max_per_day: 10             # Макс. задач за день
         check_interval: 10m         # Интервал проверки
-        cooldown: 30m               # Задержка между циклами
+        cooldown: 1h               # Задержка между циклами
         priority_filter:            # Обрабатываемые приоритеты
           - high
           - medium
@@ -39,10 +39,10 @@ repos:
 |----------|-----|-------------|----------|
 | `enabled` | bool | `false` | Включить/выключить AutoPilot |
 | `min_open_issues` | int | `1` | Мин. задач для запуска |
-| `max_per_cycle` | int | `5` | Макс. задач за цикл |
-| `max_per_day` | int | `50` | Макс. задач за день |
+| `max_per_cycle` | int | `3` | Макс. задач за цикл |
+| `max_per_day` | int | `10` | Макс. задач за день |
 | `check_interval` | duration | `10m` | Интервал проверки |
-| `cooldown` | duration | `30m` | Ожидание между циклами |
+| `cooldown` | duration | `1h` | Ожидание между циклами |
 | `priority_filter` | []string | `["*"]` | Фильтр приоритетов |
 | `category_filter` | []string | `["*"]` | Фильтр категорий |
 | `require_approval` | bool | `false` | Требовать одобрение |

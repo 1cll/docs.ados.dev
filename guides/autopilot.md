@@ -21,9 +21,9 @@ repos:
         enabled: true
         min_open_issues: 1          # Start when at least 1 issue is queued
         max_per_cycle: 3            # Max issues per cycle
-        max_per_day: 20             # Max issues per day
+        max_per_day: 10             # Max issues per day
         check_interval: 10m         # Check interval
-        cooldown: 30m               # Cooldown between cycles
+        cooldown: 1h                # Cooldown between cycles
         priority_filter:            # Priorities to process
           - high
           - medium
@@ -39,10 +39,10 @@ repos:
 |-----------|------|---------|-------------|
 | `enabled` | bool | `false` | Enable/disable AutoPilot |
 | `min_open_issues` | int | `1` | Minimum issues required to start |
-| `max_per_cycle` | int | `5` | Max issues processed per cycle |
-| `max_per_day` | int | `50` | Max issues processed per day |
+| `max_per_cycle` | int | `3` | Max issues processed per cycle |
+| `max_per_day` | int | `10` | Max issues processed per day |
 | `check_interval` | duration | `10m` | Issue check interval |
-| `cooldown` | duration | `30m` | Wait time between cycles |
+| `cooldown` | duration | `1h` | Wait time between cycles |
 | `priority_filter` | []string | `["*"]` | Priorities to process |
 | `category_filter` | []string | `["*"]` | Categories to process |
 | `require_approval` | bool | `false` | Require approval before merge |

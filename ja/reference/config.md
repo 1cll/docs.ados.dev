@@ -22,8 +22,11 @@ repos:
     fallback_agents:              # フォールバック順序
       - copilot
       - codex
-    execution_preference: cloud   # 実行環境（cloud / self-hosted）
+    execution_preference: auto    # 実行環境（auto / cloud / self-hosted）
     work_runner_group: ""         # Runner グループ名
+    merge_mode: pr                # マージモード（pr / direct）
+    auto_merge: false             # CI パス後に PR を自動マージ
+    auto_close_issue: true        # PR マージ後に Issue を自動クローズ
     vcs_provider: github          # VCS（github / gitlab / bitbucket）
     vcs_base_url: ""              # カスタム VCS URL
 
@@ -37,8 +40,8 @@ repos:
         enabled: false            # スケジュール Watcher
       sre_agent:
         enabled: true             # SRE エージェントの有効/無効
-        gcloud_projects:          # 監視する GCP プロジェクト
-          - my-gcp-project
+        gcloud_projects:          # 監視する GCP プロジェクト（名前 → project_id のマッピング）
+          my-service: my-gcp-project-id
         error_threshold: 10       # エラーレート閾値（/分）
         latency_threshold_ms: 5000  # レイテンシ閾値（ms）
         check_interval: 5m        # チェック間隔
@@ -47,9 +50,9 @@ repos:
         enabled: false            # AutoPilot の有効/無効
         min_open_issues: 1        # 開始に必要な最低オープン Issue 数
         max_per_cycle: 3          # 1 サイクルあたり最大件数
-        max_per_day: 20           # 1 日あたり最大件数
+        max_per_day: 10           # 1 日あたり最大件数
         check_interval: 10m       # チェック間隔
-        cooldown: 30m             # サイクル間のクールダウン
+        cooldown: 1h              # サイクル間のクールダウン
         priority_filter:          # 優先度フィルタ
           - high
           - medium
@@ -67,12 +70,18 @@ agents:
   max_concurrent: 5              # 最大同時実行数
   per_repo_min: 1                # リポジトリごとの最低数
   per_repo_max: 3                # リポジトリごとの最大数
-  lock_ttl: 30m                  # ロック TTL
+  lock_ttl: 45m                  # ロック TTL
   definitions:                   # カスタムエージェント定義
     - name: claude-custom
       agent: claude
       model: claude-opus-4
       description: "高難度タスク用"
+
+# ジョブ設定
+job:
+  execution_mode: inline         # 実行モード（inline / job）
+  job_name: ados-job             # Cloud Run Job 名（mode=job 時）
+  region: asia-northeast1        # リージョン（mode=job 時）
 
 # ルーティング設定
 routing:
@@ -106,10 +115,16 @@ routing:
 | `model` | string | `""` | 使用モデル |
 | `enable_fallback` | bool | `true` | フォールバック有効 |
 | `fallback_agents` | []string | `[]` | フォールバック順序 |
-| `execution_preference` | string | `"cloud"` | 実行環境 |
+| `execution_preference` | string | `"auto"` | 実行環境（`auto` / `cloud` / `self-hosted`） |
 | `work_runner_group` | string | `""` | Runner グループ |
+| `merge_mode` | string | `"pr"` | マージモード（`pr` = PR 作成、`direct` = 直接プッシュ） |
+| `auto_merge` | bool | `false` | CI パス後に PR を自動マージ |
+| `auto_close_issue` | bool | `true` | PR マージ後に Issue を自動クローズ |
 | `vcs_provider` | string | `"github"` | VCS プロバイダー |
 | `vcs_base_url` | string | `""` | カスタム URL |
+
+> [!NOTE]
+> `execution_preference: "auto"`（デフォルト）は、セルフホステッドランナーが利用可能であればそちらを使用し、なければクラウド実行にフォールバックします。
 
 ### repos[].workers
 
@@ -124,7 +139,7 @@ routing:
 | フィールド | 型 | デフォルト | 説明 |
 |-----------|------|---------|------|
 | `enabled` | bool | `false` | SRE の有効/無効 |
-| `gcloud_projects` | []string | `[]` | GCP プロジェクト ID |
+| `gcloud_projects` | map[string]string | `{}` | GCP プロジェクトマッピング（名前 → project_id） |
 | `error_threshold` | int | `10` | エラーレート閾値 |
 | `latency_threshold_ms` | int | `5000` | レイテンシ閾値 |
 | `check_interval` | duration | `"5m"` | チェック間隔 |
@@ -136,10 +151,10 @@ routing:
 |-----------|------|---------|------|
 | `enabled` | bool | `false` | AutoPilot の有効/無効 |
 | `min_open_issues` | int | `1` | 開始に必要な最低オープン Issue 数 |
-| `max_per_cycle` | int | `5` | 1 サイクルあたりの最大数 |
-| `max_per_day` | int | `50` | 1 日あたりの最大数 |
+| `max_per_cycle` | int | `3` | 1 サイクルあたりの最大数 |
+| `max_per_day` | int | `10` | 1 日あたりの最大数 |
 | `check_interval` | duration | `"10m"` | チェック間隔 |
-| `cooldown` | duration | `"30m"` | クールダウン |
+| `cooldown` | duration | `"1h"` | クールダウン |
 | `priority_filter` | []string | `["*"]` | 優先度フィルタ |
 | `category_filter` | []string | `["*"]` | カテゴリフィルタ |
 | `require_approval` | bool | `false` | 承認要求 |
@@ -153,7 +168,7 @@ routing:
 | `max_concurrent` | int | `5` | グローバル最大同時実行数 |
 | `per_repo_min` | int | `1` | リポジトリごとの最低数 |
 | `per_repo_max` | int | `3` | リポジトリごとの最大数 |
-| `lock_ttl` | duration | `"30m"` | ロック TTL |
+| `lock_ttl` | duration | `"45m"` | ロック TTL |
 
 ### routing
 
@@ -164,11 +179,3 @@ routing:
 | `rules[].agent` | string | 使用するエージェント |
 | `rules[].model` | string | 使用するモデル |
 | `fallback` | []string | ルールにマッチしない場合のフォールバック |
-
-## 設定の検証
-
-CLI で設定ファイルの構文を検証できます：
-
-```bash
-ados config validate --config ados.yaml
-```

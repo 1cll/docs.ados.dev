@@ -28,8 +28,6 @@ repos:
 |-----------|------------------|
 | **GitHub Actions** | Webhook / API-опрос |
 | **GitLab CI** | Webhook / API-опрос |
-| **CircleCI** | API-опрос |
-| **Jenkins** | Webhook |
 
 ## Типы обнаруживаемых ошибок
 
@@ -105,4 +103,4 @@ Pipeline Watcher обнаруживает сбои CI/CD через webhook'и �
 ```
 
 > [!TIP]
-> Pipeline Watcher отслеживает сбои CI не только в PR, созданных [автоматизацией задач](ru/guides/issue-automation.md), но и в PR, созданных людьми.
+> Pipeline Watcher отслеживает сбои CI не только в PR, созданных [автоматизацией задач](guides/issue-automation.md), но и в PR, созданных людьми.

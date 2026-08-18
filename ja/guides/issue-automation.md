@@ -114,9 +114,8 @@ Issue の処理は以下のステータスで管理されます：
 
 | ステータス | 説明 |
 |-----------|------|
-| `queued` | 処理待ち |
-| `in_progress` | AI が実装中 |
-| `pr_created` | PR が作成済み |
-| `ci_fixing` | CI 失敗を自動修復中 |
-| `completed` | マージ完了 |
+| `running` | AI が実装中 |
+| `completed` | 処理完了 |
 | `failed` | 処理失敗 |
+| `needs-human` | 人の対応が必要 |
+| `reset` | 再処理のためにリセット |

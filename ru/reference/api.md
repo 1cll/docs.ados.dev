@@ -1,21 +1,24 @@
 # Справочник REST API
 
-ADOS предоставляет RESTful API. Все эндпоинты требуют аутентификации.
+ADOS предоставляет RESTful API. Все эндпоинты требуют аутентификации через Firebase ID Token, если не указано иное.
 
 ## Аутентификация
 
-Включайте Bearer-токен в каждый запрос:
+Включайте Bearer-токен (Firebase ID Token) в каждый запрос:
 
 ```bash
-curl -H "Authorization: Bearer YOUR_ADOS_TOKEN" \
-  https://api.ados.dev/api/...
+curl -H "Authorization: Bearer YOUR_FIREBASE_ID_TOKEN" \
+  https://api.ados.dev/api/v1/...
 ```
 
 ## Базовый URL
 
 ```
-https://api.ados.dev/api
+https://api.ados.dev/api/v1
 ```
+
+> [!NOTE]
+> Все API-пути ниже указаны относительно базового URL (`/api/v1`).
 
 ---
 
@@ -27,14 +30,16 @@ https://api.ados.dev/api
 GET /dashboard
 ```
 
-Ответ:
-```json
-{
-  "repos": [...],
-  "active_jobs": 3,
-  "total_issues_processed": 142,
-  "total_prs_created": 138
-}
+### Получить данные трендов
+
+```http
+GET /dashboard/trends
+```
+
+### Получить статистику агентов
+
+```http
+GET /dashboard/agent-stats
 ```
 
 ---
@@ -47,106 +52,287 @@ GET /dashboard
 GET /jobs
 ```
 
+Параметры запроса: `?status=`, `?repo=`, `?limit=`
+
 ### Детали задания
 
 ```http
-GET /jobs/{jobId}
+GET /jobs/{id}
 ```
 
 ---
 
-## Репозитории
+## Блокировки
 
-### Список репозиториев
+### Список активных блокировок
+
+```http
+GET /locks
+```
+
+### Удаление блокировки
+
+```http
+DELETE /locks/{id}
+```
+
+---
+
+## Логи
+
+### Получить логи сервиса
+
+```http
+GET /logs
+```
+
+Параметры запроса: `?service=`
+
+### Потоковая передача логов (SSE)
+
+```http
+GET /logs/stream
+```
+
+---
+
+## Настройки репозиториев
+
+### Список включённых репозиториев
 
 ```http
 GET /repos
 ```
 
-### Получить настройки репозитория
+### Список настроек репозиториев
 
 ```http
 GET /settings/repos
 ```
 
-### Обновить настройки репозитория
+### Добавить репозиторий
 
 ```http
-PUT /settings/repos
+POST /settings/repos
 Content-Type: application/json
 
 {
-  "repos": [
-    {
-      "name": "my-repo",
-      "owner": "my-org",
-      "repo": "my-repo",
-      "label": "ados",
-      "target_branch": "main"
-    }
-  ]
+  "owner": "my-org",
+  "repo": "my-repo",
+  "label": "ados",
+  "target_branch": "main"
 }
+```
+
+### Обновить настройки репозитория
+
+```http
+PATCH /settings/repos/{id}
+Content-Type: application/json
+
+{
+  "label": "ados",
+  "target_branch": "develop",
+  "default_agent": "claude"
+}
+```
+
+### Удалить репозиторий
+
+```http
+DELETE /settings/repos/{id}
 ```
 
 ---
 
 ## Интеграция с GitHub
 
-### Список установок GitHub
+### Сохранить GitHub PAT
 
 ```http
-GET /settings/github/installations
+POST /settings/github/token
 ```
 
-### Список установленных репозиториев
+### Получить статус подключения GitHub
+
+```http
+GET /settings/github/status
+```
+
+### Удалить GitHub PAT
+
+```http
+DELETE /settings/github/token
+```
+
+### Список репозиториев GitHub
 
 ```http
 GET /settings/github/repos
 ```
 
-### Получить copilot-instructions.md
+### Разрешить имя пользователя GitHub
 
 ```http
-GET /github/{owner}/{repo}/instructions
-```
-
-### Список Issue
-
-```http
-GET /github/{owner}/{repo}/issues
-```
-
-### Список Pull Request
-
-```http
-GET /github/{owner}/{repo}/pulls
+POST /github/resolve-username
 ```
 
 ---
 
-## Бэклог
+## GitHub App
 
-### Получить бэклог
+### Получить статус GitHub App
 
 ```http
-GET /github/{owner}/{repo}/backlog
+GET /settings/github-app/status
 ```
 
-### Запустить генерацию бэклога
+### Настроить GitHub App
 
 ```http
-POST /github/{owner}/{repo}/backlog/generate
+POST /settings/github-app/configure
 ```
 
-### Статус генерации бэклога
+### Удалить GitHub App
 
 ```http
-GET /github/{owner}/{repo}/backlog/status
+DELETE /settings/github-app
+```
+
+### Список установок GitHub App
+
+```http
+GET /settings/github-app/installations
 ```
 
 ---
 
-## Обработка Issue
+## Anthropic / Claude MAX
+
+### Сохранить API-ключ Anthropic
+
+```http
+POST /settings/anthropic/key
+```
+
+### Получить статус подключения Anthropic
+
+```http
+GET /settings/anthropic/status
+```
+
+### Удалить API-ключ Anthropic
+
+```http
+DELETE /settings/anthropic/key
+```
+
+### Сохранить OAuth-токены Claude MAX
+
+```http
+POST /settings/claude-max/tokens
+```
+
+### Получить статус Claude MAX
+
+```http
+GET /settings/claude-max/status
+```
+
+### Удалить Claude MAX
+
+```http
+DELETE /settings/claude-max
+```
+
+---
+
+## Операции с репозиториями
+
+Все пути ниже имеют префикс `/github/{owner}/{repo}`.
+
+### Issue
+
+```http
+GET    /issues                          # Список issue
+POST   /issues                          # Создать issue
+PATCH  /issues/{number}                 # Обновить issue
+POST   /issues/{number}/close           # Закрыть issue
+POST   /issues/{number}/reopen          # Переоткрыть issue
+POST   /issues/{number}/labels          # Добавить метки
+DELETE /issues/{number}/labels/{name}   # Удалить метку
+POST   /issues/{number}/comments        # Добавить комментарий
+```
+
+### Pull Request
+
+```http
+GET  /pulls                                  # Список PR
+GET  /pulls/{number}                         # Детали PR
+GET  /pulls/{number}/files                   # Изменённые файлы PR
+PUT  /pulls/{number}/merge                   # Слить PR
+PUT  /pulls/{number}/update-branch           # Обновить ветку PR
+POST /pulls/{number}/resolve-conflicts       # Разрешить конфликты
+POST /pulls/batch-merge                      # Пакетное слияние PR
+GET  /pulls/batch-merge/{jobId}/status       # Статус пакетного слияния
+POST /pulls/resolve-conflicts-batch          # Пакетное разрешение конфликтов
+GET  /conflict-resolve-status                # Статус разрешения конфликтов
+```
+
+### Copilot Instructions
+
+```http
+GET  /instructions           # Получить copilot-instructions.md
+PUT  /instructions           # Обновить copilot-instructions.md
+POST /instructions/pr        # Создать PR с обновлением
+POST /instructions/validate  # Валидация инструкций
+```
+
+### Мониторинг
+
+```http
+GET /monitor                 # Мониторинг операций (запуски, алерты, ветки)
+GET /actions/runs            # Запуски GitHub Actions
+```
+
+### Файловые операции
+
+```http
+GET    /file    # Чтение файла
+PUT    /file    # Обновление файла
+POST   /file    # Создание файла
+DELETE /file    # Удаление файла
+```
+
+### Пайплайн и Workflow
+
+```http
+GET  /workflow                       # Получить настройки workflow
+PUT  /workflow/ados-pipeline         # Сохранить ADOS pipeline
+POST /branches                       # Создать ветку
+GET  /repo-meta                      # Метаданные репозитория
+POST /deploy-targets/scan            # Сканирование целей деплоя
+GET  /pipeline-runners               # Получить настройки pipeline runner
+PUT  /pipeline-runners               # Сохранить настройки pipeline runner
+POST /pipeline-runners/apply         # Применить настройки pipeline runner
+```
+
+---
+
+## AI Бэклог
+
+Все пути ниже имеют префикс `/github/{owner}/{repo}/backlog`.
+
+```http
+POST /generate        # Запустить генерацию бэклога
+GET  /latest           # Получить последний результат сканирования
+GET  /scan/{scanId}    # Получить детали сканирования
+POST /apply            # Применить элементы бэклога к Issue
+```
+
+---
+
+## Обработка Issue (Work Runner)
 
 ### Отправить Issue на обработку
 
@@ -161,133 +347,158 @@ Content-Type: application/json
 }
 ```
 
-### Проверить статус обработки Issue
+### Проверить доступность Work Runner
 
 ```http
-GET /work/issues/check?owner=my-org&repo=my-repo&issue=42
+GET /work/issues/check?owner=my-org&repo=my-repo
 ```
 
----
-
-## Work Runner
-
-### WebSocket-подключение
+### WebSocket для Work Runner
 
 ```
 WSS /work/runners/ws
 ```
 
-WebSocket-эндпоинт для связи с Work Runner в реальном времени.
+Аутентификация через токен ADOS Agent (Firebase Auth не требуется).
 
-### Список Runner
+---
+
+## Self-Hosted Runner
 
 ```http
-GET /runners
-```
-
-Ответ:
-```json
-[
-  {
-    "id": "runner-001",
-    "group": "default",
-    "status": "connected",
-    "hostname": "server-01"
-  }
-]
+GET    /runners                      # Список Runner
+POST   /runners                      # Регистрация Runner
+PATCH  /runners/{id}                 # Обновление Runner
+DELETE /runners/{id}                 # Удаление Runner
+POST   /runners/{id}/heartbeat      # Heartbeat
+GET    /runners/setup-script         # Получить скрипт настройки
+GET    /runners/savings              # Оценка экономии
+GET    /runners/workflow-template    # Шаблон workflow
+GET    /runners/groups               # Список групп Runner
+POST   /runners/groups               # Создать группу Runner
+PATCH  /runners/groups/{id}          # Обновить группу Runner
+DELETE /runners/groups/{id}          # Удалить группу Runner
 ```
 
 ---
 
-## Блокировки
-
-### Список активных блокировок
+## Подключения (Credential Vault)
 
 ```http
-GET /locks
+GET    /connections                  # Список подключений
+POST   /connections                  # Создать подключение
+PATCH  /connections/{id}             # Обновить подключение
+DELETE /connections/{id}             # Удалить подключение
+POST   /connections/{id}/test        # Тестировать подключение
+POST   /connections/migrate          # Миграция устаревших учётных данных
+GET    /connections/oauth/start      # Начать OAuth-поток
+GET    /connections/oauth/callback   # OAuth-коллбэк
 ```
 
 ---
 
-## Логи
-
-### Получить логи задания
-
-```http
-GET /logs/{jobId}
-```
-
----
-
-## Использование
+## Использование и бюджет
 
 ### Получить статистику использования
 
 ```http
-GET /usage/stats
+GET /usage
 ```
 
-### Получить месячное использование
+Возвращает использование LLM по модели с ежедневной разбивкой и оценкой затрат.
+
+### Получить разбивку затрат
 
 ```http
-GET /usage/monthly
+GET /usage/breakdown
 ```
 
----
-
-## Бюджет
-
-### Получить информацию о бюджете
+### Получить статус бюджета
 
 ```http
 GET /budget
 ```
 
----
-
-## Биллинг
-
-### Получить информацию о биллинге
+### Установить бюджет
 
 ```http
-GET /billing/info
+PUT /budget
 ```
 
-### Управление подпиской
+---
+
+## Биллинг (Stripe)
+
+### Получить статус биллинга
+
+```http
+GET /billing/status
+```
+
+### Создать сессию оплаты
+
+```http
+POST /billing/checkout
+```
+
+### Получить URL клиентского портала
 
 ```http
 GET /billing/portal
 ```
 
-Возвращает URL перенаправления на клиентский портал Stripe.
+### Webhook Stripe
+
+```http
+POST /billing/webhook
+```
+
+Firebase Auth не требуется (верификация через подпись Stripe).
 
 ---
 
-## Подключения
-
-### Список подключений
+## Уведомления
 
 ```http
-GET /connections
+GET  /settings/notifications        # Получить настройки
+POST /settings/notifications        # Сохранить настройки
+POST /settings/notifications/test   # Отправить тестовое уведомление
 ```
 
-### Добавить подключение
+---
+
+## Webhook
 
 ```http
-POST /connections
-Content-Type: application/json
+POST   /webhooks/github              # Приём GitHub webhook
+POST   /settings/webhook/secret      # Сохранить секрет webhook
+GET    /settings/webhook/status       # Получить статус webhook
+DELETE /settings/webhook/secret       # Удалить секрет webhook
+```
 
-{
-  "type": "github",
-  "token": "ghp_xxxx"
-}
+---
+
+## Цели деплоя
+
+```http
+GET    /settings/repos/{id}/deploy-targets              # Список целей
+POST   /settings/repos/{id}/deploy-targets              # Сохранить цель
+DELETE /settings/repos/{id}/deploy-targets/{targetId}   # Удалить цель
+```
+
+---
+
+## PAT для конкретного репозитория
+
+```http
+POST   /settings/repos/{id}/pat          # Сохранить PAT
+GET    /settings/repos/{id}/pat/status   # Получить статус PAT
+DELETE /settings/repos/{id}/pat          # Удалить PAT
 ```
 
 ---
 
 ## Модели Copilot
-
-### Список доступных моделей
 
 ```http
 GET /copilot/models
@@ -295,29 +506,21 @@ GET /copilot/models
 
 ---
 
-## Webhook
-
-### Получение вебхука GitHub
+## Здоровье сервиса
 
 ```http
-POST /webhooks/github
+GET /health
 ```
-
-Эндпоинт для приёма событий вебхуков от GitHub. Настраивается автоматически при установке GitHub App.
 
 ---
 
 ## Ответы об ошибках
 
-Все ошибки возвращаются в следующем формате:
+Ошибки возвращаются в виде JSON-объекта с полем `error` (строка):
 
 ```json
 {
-  "error": {
-    "code": "RATE_LIMITED",
-    "message": "Rate limit exceeded",
-    "retry_after": 60
-  }
+  "error": "описание ошибки"
 }
 ```
 
@@ -327,6 +530,7 @@ POST /webhooks/github
 |-----|----------|
 | `200` | Успех |
 | `201` | Создано |
+| `202` | Принято (асинхронная операция запущена) |
 | `400` | Некорректный запрос |
 | `401` | Не авторизован |
 | `403` | Запрещено |
@@ -336,12 +540,11 @@ POST /webhooks/github
 
 ## Лимиты запросов
 
-К API применяются лимиты запросов:
-
 | План | Запросов |
 |------|----------|
 | Free | 100 запр./мин |
 | Pro | 500 запр./мин |
 | Team | 2000 запр./мин |
+| Enterprise | 5000 запр./мин |
 
-При достижении лимита возвращается статус `429` с полем `retry_after`.
+При достижении лимита возвращается статус `429`. Используйте экспоненциальную задержку для повторных запросов.

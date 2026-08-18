@@ -1,40 +1,45 @@
 # REST API Reference
 
-ADOS provides a RESTful API. All endpoints require authentication.
+ADOS provides a RESTful API. All endpoints require authentication via Firebase ID Token unless otherwise noted.
 
 ## Authentication
 
-Include a Bearer token with every request:
+Include a Bearer token (Firebase ID Token) with every request:
 
 ```bash
-curl -H "Authorization: Bearer YOUR_ADOS_TOKEN" \
-  https://api.ados.dev/api/...
+curl -H "Authorization: Bearer YOUR_FIREBASE_ID_TOKEN" \
+  https://api.ados.dev/api/v1/...
 ```
 
 ## Base URL
 
 ```
-https://api.ados.dev/api
+https://api.ados.dev/api/v1
 ```
+
+> [!NOTE]
+> All API paths below are relative to the base URL (`/api/v1`).
 
 ---
 
 ## Dashboard
 
-### Get Dashboard Info
+### Get Dashboard Overview
 
 ```http
 GET /dashboard
 ```
 
-Response:
-```json
-{
-  "repos": [...],
-  "active_jobs": 3,
-  "total_issues_processed": 142,
-  "total_prs_created": 138
-}
+### Get Trend Data
+
+```http
+GET /dashboard/trends
+```
+
+### Get Agent Statistics
+
+```http
+GET /dashboard/agent-stats
 ```
 
 ---
@@ -47,106 +52,287 @@ Response:
 GET /jobs
 ```
 
+Query parameters: `?status=`, `?repo=`, `?limit=`
+
 ### Get Job Details
 
 ```http
-GET /jobs/{jobId}
+GET /jobs/{id}
 ```
 
 ---
 
-## Repositories
+## Locks
 
-### List Repositories
+### List Active Locks
+
+```http
+GET /locks
+```
+
+### Delete Lock
+
+```http
+DELETE /locks/{id}
+```
+
+---
+
+## Logs
+
+### Get Service Logs
+
+```http
+GET /logs
+```
+
+Query parameters: `?service=`
+
+### Stream Logs (SSE)
+
+```http
+GET /logs/stream
+```
+
+---
+
+## Repository Settings
+
+### List Enabled Repositories
 
 ```http
 GET /repos
 ```
 
-### Get Repository Settings
+### List Repository Settings
 
 ```http
 GET /settings/repos
 ```
 
-### Update Repository Settings
+### Add Repository
 
 ```http
-PUT /settings/repos
+POST /settings/repos
 Content-Type: application/json
 
 {
-  "repos": [
-    {
-      "name": "my-repo",
-      "owner": "my-org",
-      "repo": "my-repo",
-      "label": "ados",
-      "target_branch": "main"
-    }
-  ]
+  "owner": "my-org",
+  "repo": "my-repo",
+  "label": "ados",
+  "target_branch": "main"
 }
+```
+
+### Update Repository Settings
+
+```http
+PATCH /settings/repos/{id}
+Content-Type: application/json
+
+{
+  "label": "ados",
+  "target_branch": "develop",
+  "default_agent": "claude"
+}
+```
+
+### Delete Repository
+
+```http
+DELETE /settings/repos/{id}
 ```
 
 ---
 
 ## GitHub Integration
 
-### List GitHub Installations
+### Save GitHub PAT
 
 ```http
-GET /settings/github/installations
+POST /settings/github/token
 ```
 
-### List Installed Repositories
+### Get GitHub Connection Status
+
+```http
+GET /settings/github/status
+```
+
+### Delete GitHub PAT
+
+```http
+DELETE /settings/github/token
+```
+
+### List GitHub Repositories
 
 ```http
 GET /settings/github/repos
 ```
 
-### Get copilot-instructions.md
+### Resolve GitHub Username
 
 ```http
-GET /github/{owner}/{repo}/instructions
-```
-
-### List Issues
-
-```http
-GET /github/{owner}/{repo}/issues
-```
-
-### List Pull Requests
-
-```http
-GET /github/{owner}/{repo}/pulls
+POST /github/resolve-username
 ```
 
 ---
 
-## Backlog
+## GitHub App
 
-### Get Backlog
+### Get GitHub App Status
 
 ```http
-GET /github/{owner}/{repo}/backlog
+GET /settings/github-app/status
 ```
 
-### Start Backlog Generation
+### Configure GitHub App
 
 ```http
-POST /github/{owner}/{repo}/backlog/generate
+POST /settings/github-app/configure
 ```
 
-### Backlog Generation Status
+### Delete GitHub App
 
 ```http
-GET /github/{owner}/{repo}/backlog/status
+DELETE /settings/github-app
+```
+
+### List GitHub App Installations
+
+```http
+GET /settings/github-app/installations
 ```
 
 ---
 
-## Issue Processing
+## Anthropic / Claude MAX
+
+### Save Anthropic API Key
+
+```http
+POST /settings/anthropic/key
+```
+
+### Get Anthropic Connection Status
+
+```http
+GET /settings/anthropic/status
+```
+
+### Delete Anthropic API Key
+
+```http
+DELETE /settings/anthropic/key
+```
+
+### Save Claude MAX OAuth Tokens
+
+```http
+POST /settings/claude-max/tokens
+```
+
+### Get Claude MAX Status
+
+```http
+GET /settings/claude-max/status
+```
+
+### Delete Claude MAX
+
+```http
+DELETE /settings/claude-max
+```
+
+---
+
+## Repository Operations
+
+All paths below are prefixed with `/github/{owner}/{repo}`.
+
+### Issues
+
+```http
+GET    /issues                          # List issues
+POST   /issues                          # Create issue
+PATCH  /issues/{number}                 # Update issue
+POST   /issues/{number}/close           # Close issue
+POST   /issues/{number}/reopen          # Reopen issue
+POST   /issues/{number}/labels          # Add labels
+DELETE /issues/{number}/labels/{name}   # Remove label
+POST   /issues/{number}/comments        # Add comment
+```
+
+### Pull Requests
+
+```http
+GET  /pulls                                  # List PRs
+GET  /pulls/{number}                         # Get PR details
+GET  /pulls/{number}/files                   # Get PR changed files
+PUT  /pulls/{number}/merge                   # Merge PR
+PUT  /pulls/{number}/update-branch           # Update PR branch
+POST /pulls/{number}/resolve-conflicts       # Resolve conflicts
+POST /pulls/batch-merge                      # Batch merge PRs
+GET  /pulls/batch-merge/{jobId}/status       # Batch merge status
+POST /pulls/resolve-conflicts-batch          # Batch conflict resolution
+GET  /conflict-resolve-status                # Conflict resolution status
+```
+
+### Copilot Instructions
+
+```http
+GET  /instructions           # Get copilot-instructions.md
+PUT  /instructions           # Update copilot-instructions.md
+POST /instructions/pr        # Create update PR
+POST /instructions/validate  # Validate instructions
+```
+
+### Monitor
+
+```http
+GET /monitor                 # Operations monitoring (runs, alerts, branches)
+GET /actions/runs            # GitHub Actions runs
+```
+
+### File Operations
+
+```http
+GET    /file    # Read file
+PUT    /file    # Update file
+POST   /file    # Create file
+DELETE /file    # Delete file
+```
+
+### Workflow & Pipeline
+
+```http
+GET  /workflow                       # Get workflow settings
+PUT  /workflow/ados-pipeline         # Save ADOS pipeline
+POST /branches                       # Create branch
+GET  /repo-meta                      # Repository metadata
+POST /deploy-targets/scan            # Scan deploy targets
+GET  /pipeline-runners               # Get pipeline runner settings
+PUT  /pipeline-runners               # Save pipeline runner settings
+POST /pipeline-runners/apply         # Apply pipeline runner settings
+```
+
+---
+
+## AI Backlog
+
+All paths below are prefixed with `/github/{owner}/{repo}/backlog`.
+
+```http
+POST /generate        # Start backlog generation
+GET  /latest           # Get latest scan result
+GET  /scan/{scanId}    # Get scan details
+POST /apply            # Apply backlog items to Issues
+```
+
+---
+
+## Issue Processing (Work Runner)
 
 ### Submit Issue for Processing
 
@@ -161,133 +347,158 @@ Content-Type: application/json
 }
 ```
 
-### Check Issue Processing Status
+### Check Work Runner Availability
 
 ```http
-GET /work/issues/check?owner=my-org&repo=my-repo&issue=42
+GET /work/issues/check?owner=my-org&repo=my-repo
 ```
 
----
-
-## Work Runner
-
-### WebSocket Connection
+### Work Runner WebSocket
 
 ```
 WSS /work/runners/ws
 ```
 
-WebSocket endpoint for real-time communication with Work Runner.
+Authenticated via ADOS Agent token (Firebase Auth not required).
 
-### List Runners
+---
+
+## Self-Hosted Runners
 
 ```http
-GET /runners
-```
-
-Response:
-```json
-[
-  {
-    "id": "runner-001",
-    "group": "default",
-    "status": "connected",
-    "hostname": "server-01"
-  }
-]
+GET    /runners                      # List runners
+POST   /runners                      # Register runner
+PATCH  /runners/{id}                 # Update runner
+DELETE /runners/{id}                 # Delete runner
+POST   /runners/{id}/heartbeat      # Heartbeat
+GET    /runners/setup-script         # Get setup script
+GET    /runners/savings              # Cost savings estimate
+GET    /runners/workflow-template    # Workflow template
+GET    /runners/groups               # List runner groups
+POST   /runners/groups               # Create runner group
+PATCH  /runners/groups/{id}          # Update runner group
+DELETE /runners/groups/{id}          # Delete runner group
 ```
 
 ---
 
-## Locks
-
-### List Active Locks
+## Connections (Credential Vault)
 
 ```http
-GET /locks
+GET    /connections                  # List connections
+POST   /connections                  # Create connection
+PATCH  /connections/{id}             # Update connection
+DELETE /connections/{id}             # Delete connection
+POST   /connections/{id}/test        # Test connection
+POST   /connections/migrate          # Migrate legacy credentials
+GET    /connections/oauth/start      # Start OAuth flow
+GET    /connections/oauth/callback   # OAuth callback
 ```
 
 ---
 
-## Logs
-
-### Get Job Logs
-
-```http
-GET /logs/{jobId}
-```
-
----
-
-## Usage
+## Usage & Budget
 
 ### Get Usage Statistics
 
 ```http
-GET /usage/stats
+GET /usage
 ```
 
-### Get Monthly Usage
+Returns LLM usage per model with daily breakdown and cost estimates.
+
+### Get Cost Breakdown
 
 ```http
-GET /usage/monthly
+GET /usage/breakdown
 ```
 
----
-
-## Budget
-
-### Get Budget Info
+### Get Budget Status
 
 ```http
 GET /budget
 ```
 
----
-
-## Billing
-
-### Get Billing Info
+### Set Budget
 
 ```http
-GET /billing/info
+PUT /budget
 ```
 
-### Subscription Management
+---
+
+## Billing (Stripe)
+
+### Get Billing Status
+
+```http
+GET /billing/status
+```
+
+### Create Checkout Session
+
+```http
+POST /billing/checkout
+```
+
+### Get Customer Portal URL
 
 ```http
 GET /billing/portal
 ```
 
-Returns a redirect URL to the Stripe customer portal.
+### Stripe Webhook
+
+```http
+POST /billing/webhook
+```
+
+No Firebase Auth required (verified via Stripe signature).
 
 ---
 
-## Connections
-
-### List Connections
+## Notifications
 
 ```http
-GET /connections
+GET  /settings/notifications        # Get settings
+POST /settings/notifications        # Save settings
+POST /settings/notifications/test   # Send test notification
 ```
 
-### Add Connection
+---
+
+## Webhook
 
 ```http
-POST /connections
-Content-Type: application/json
+POST   /webhooks/github              # Receive GitHub webhook
+POST   /settings/webhook/secret      # Save webhook secret
+GET    /settings/webhook/status       # Get webhook status
+DELETE /settings/webhook/secret       # Delete webhook secret
+```
 
-{
-  "type": "github",
-  "token": "ghp_xxxx"
-}
+---
+
+## Deploy Targets
+
+```http
+GET    /settings/repos/{id}/deploy-targets              # List targets
+POST   /settings/repos/{id}/deploy-targets              # Save target
+DELETE /settings/repos/{id}/deploy-targets/{targetId}   # Delete target
+```
+
+---
+
+## Per-Repository PAT
+
+```http
+POST   /settings/repos/{id}/pat          # Save PAT
+GET    /settings/repos/{id}/pat/status   # Get PAT status
+DELETE /settings/repos/{id}/pat          # Delete PAT
 ```
 
 ---
 
 ## Copilot Models
-
-### List Available Models
 
 ```http
 GET /copilot/models
@@ -295,29 +506,21 @@ GET /copilot/models
 
 ---
 
-## Webhook
-
-### Receive GitHub Webhook
+## Health
 
 ```http
-POST /webhooks/github
+GET /health
 ```
-
-Endpoint for receiving webhook events from GitHub. Automatically configured when the GitHub App is installed.
 
 ---
 
 ## Error Responses
 
-All errors are returned in the following format:
+Errors are returned as a JSON object with an `error` string field:
 
 ```json
 {
-  "error": {
-    "code": "RATE_LIMITED",
-    "message": "Rate limit exceeded",
-    "retry_after": 60
-  }
+  "error": "error message description"
 }
 ```
 
@@ -327,6 +530,7 @@ All errors are returned in the following format:
 |------|-------------|
 | `200` | Success |
 | `201` | Created |
+| `202` | Accepted (async operation started) |
 | `400` | Bad Request |
 | `401` | Unauthorized |
 | `403` | Forbidden |
@@ -336,12 +540,11 @@ All errors are returned in the following format:
 
 ## Rate Limits
 
-Rate limits apply to the API:
-
 | Plan | Requests |
 |------|----------|
 | Free | 100 req/min |
 | Pro | 500 req/min |
 | Team | 2000 req/min |
+| Enterprise | 5000 req/min |
 
-When the rate limit is reached, a `429` status with a `retry_after` field is returned.
+When the rate limit is reached, a `429` status is returned. Use exponential backoff for retries.

@@ -22,8 +22,11 @@ repos:
     fallback_agents:              # Порядок fallback
       - copilot
       - codex
-    execution_preference: cloud   # Среда выполнения (cloud / self-hosted)
+    execution_preference: auto    # Среда выполнения (auto / cloud / self-hosted)
     work_runner_group: ""         # Имя группы Runner
+    merge_mode: pr                # Режим слияния (pr / direct)
+    auto_merge: false             # Авто-слияние PR при прохождении CI
+    auto_close_issue: true        # Авто-закрытие issue после слияния PR
     vcs_provider: github          # VCS (github / gitlab / bitbucket)
     vcs_base_url: ""              # Пользовательский URL VCS
 
@@ -37,8 +40,8 @@ repos:
         enabled: false            # Запланированный Watcher
       sre_agent:
         enabled: true             # Включить/выключить SRE-агент
-        gcloud_projects:          # GCP-проекты для мониторинга
-          - my-gcp-project
+        gcloud_projects:          # GCP-проекты для мониторинга (имя → project_id)
+          my-service: my-gcp-project-id
         error_threshold: 10       # Порог ошибок (/мин)
         latency_threshold_ms: 5000  # Порог задержки (мс)
         check_interval: 5m        # Интервал проверки
@@ -47,9 +50,9 @@ repos:
         enabled: false            # Включить/выключить AutoPilot
         min_open_issues: 1        # Мин. открытых Issue для запуска
         max_per_cycle: 3          # Макс. Issue за цикл
-        max_per_day: 20           # Макс. Issue в день
+        max_per_day: 10           # Макс. Issue в день
         check_interval: 10m       # Интервал проверки
-        cooldown: 30m             # Охлаждение между циклами
+        cooldown: 1h              # Охлаждение между циклами
         priority_filter:          # Фильтр приоритетов
           - high
           - medium
@@ -67,12 +70,18 @@ agents:
   max_concurrent: 5              # Макс. параллельных выполнений
   per_repo_min: 1                # Минимум на репозиторий
   per_repo_max: 3                # Максимум на репозиторий
-  lock_ttl: 30m                  # TTL блокировки
+  lock_ttl: 45m                  # TTL блокировки
   definitions:                   # Пользовательские определения агентов
     - name: claude-custom
       agent: claude
       model: claude-opus-4
       description: "Для задач высокой сложности"
+
+# Настройки задания
+job:
+  execution_mode: inline         # Режим выполнения (inline / job)
+  job_name: ados-job             # Имя Cloud Run Job (при mode=job)
+  region: asia-northeast1        # Регион (при mode=job)
 
 # Настройки маршрутизации
 routing:
@@ -106,10 +115,16 @@ routing:
 | `model` | string | `""` | Используемая модель |
 | `enable_fallback` | bool | `true` | Включить fallback |
 | `fallback_agents` | []string | `[]` | Порядок fallback |
-| `execution_preference` | string | `"cloud"` | Среда выполнения |
+| `execution_preference` | string | `"auto"` | Среда выполнения (`auto` / `cloud` / `self-hosted`) |
 | `work_runner_group` | string | `""` | Группа Runner |
+| `merge_mode` | string | `"pr"` | Режим слияния (`pr` = создание PR, `direct` = прямой push) |
+| `auto_merge` | bool | `false` | Авто-слияние PR при прохождении CI |
+| `auto_close_issue` | bool | `true` | Авто-закрытие issue после слияния PR |
 | `vcs_provider` | string | `"github"` | VCS-провайдер |
 | `vcs_base_url` | string | `""` | Пользовательский URL |
+
+> [!NOTE]
+> `execution_preference: "auto"` (по умолчанию) будет использовать self-hosted runner при его доступности, с fallback на облачное выполнение.
 
 ### repos[].workers
 
@@ -124,7 +139,7 @@ routing:
 | Поле | Тип | По умолчанию | Описание |
 |------|-----|-------------|----------|
 | `enabled` | bool | `false` | Включить/выключить SRE |
-| `gcloud_projects` | []string | `[]` | ID проектов GCP |
+| `gcloud_projects` | map[string]string | `{}` | Маппинг проектов GCP (имя → project_id) |
 | `error_threshold` | int | `10` | Порог ошибок |
 | `latency_threshold_ms` | int | `5000` | Порог задержки |
 | `check_interval` | duration | `"5m"` | Интервал проверки |
@@ -136,10 +151,10 @@ routing:
 |------|-----|-------------|----------|
 | `enabled` | bool | `false` | Включить/выключить AutoPilot |
 | `min_open_issues` | int | `1` | Мин. открытых Issue для запуска |
-| `max_per_cycle` | int | `5` | Макс. за цикл |
-| `max_per_day` | int | `50` | Макс. в день |
+| `max_per_cycle` | int | `3` | Макс. за цикл |
+| `max_per_day` | int | `10` | Макс. в день |
 | `check_interval` | duration | `"10m"` | Интервал проверки |
-| `cooldown` | duration | `"30m"` | Охлаждение |
+| `cooldown` | duration | `"1h"` | Охлаждение |
 | `priority_filter` | []string | `["*"]` | Фильтр приоритетов |
 | `category_filter` | []string | `["*"]` | Фильтр категорий |
 | `require_approval` | bool | `false` | Требовать одобрение |
@@ -153,7 +168,7 @@ routing:
 | `max_concurrent` | int | `5` | Глобальный макс. параллельных выполнений |
 | `per_repo_min` | int | `1` | Минимум на репозиторий |
 | `per_repo_max` | int | `3` | Максимум на репозиторий |
-| `lock_ttl` | duration | `"30m"` | TTL блокировки |
+| `lock_ttl` | duration | `"45m"` | TTL блокировки |
 
 ### routing
 
@@ -164,11 +179,3 @@ routing:
 | `rules[].agent` | string | Используемый агент |
 | `rules[].model` | string | Используемая модель |
 | `fallback` | []string | Fallback при отсутствии совпадений |
-
-## Проверка конфигурации
-
-Синтаксис файла конфигурации можно проверить с помощью CLI:
-
-```bash
-ados config validate --config ados.yaml
-```

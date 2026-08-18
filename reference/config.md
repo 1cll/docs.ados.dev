@@ -22,8 +22,11 @@ repos:
     fallback_agents:              # Fallback order
       - copilot
       - codex
-    execution_preference: cloud   # Execution environment (cloud / self-hosted)
+    execution_preference: auto    # Execution environment (auto / cloud / self-hosted)
     work_runner_group: ""         # Runner group name
+    merge_mode: pr                # Merge mode (pr / direct)
+    auto_merge: false             # Auto-merge PRs when CI passes
+    auto_close_issue: true        # Auto-close issue after PR merge
     vcs_provider: github          # VCS (github / gitlab / bitbucket)
     vcs_base_url: ""              # Custom VCS URL
 
@@ -37,8 +40,8 @@ repos:
         enabled: false            # Scheduled Watcher
       sre_agent:
         enabled: true             # Enable/disable SRE agent
-        gcloud_projects:          # GCP projects to monitor
-          - my-gcp-project
+        gcloud_projects:          # GCP projects to monitor (name → project_id mapping)
+          my-service: my-gcp-project-id
         error_threshold: 10       # Error rate threshold (/min)
         latency_threshold_ms: 5000  # Latency threshold (ms)
         check_interval: 5m        # Check interval
@@ -47,9 +50,9 @@ repos:
         enabled: false            # Enable/disable AutoPilot
         min_open_issues: 1        # Minimum open Issues to start
         max_per_cycle: 3          # Max Issues per cycle
-        max_per_day: 20           # Max Issues per day
+        max_per_day: 10           # Max Issues per day
         check_interval: 10m       # Check interval
-        cooldown: 30m             # Cooldown between cycles
+        cooldown: 1h              # Cooldown between cycles
         priority_filter:          # Priority filter
           - high
           - medium
@@ -67,12 +70,18 @@ agents:
   max_concurrent: 5              # Max concurrent executions
   per_repo_min: 1                # Min per repository
   per_repo_max: 3                # Max per repository
-  lock_ttl: 30m                  # Lock TTL
+  lock_ttl: 45m                  # Lock TTL
   definitions:                   # Custom agent definitions
     - name: claude-custom
       agent: claude
       model: claude-opus-4
       description: "For high-difficulty tasks"
+
+# Job settings
+job:
+  execution_mode: inline         # Execution mode (inline / job)
+  job_name: ados-job             # Cloud Run Job name (when mode=job)
+  region: asia-northeast1        # Region (when mode=job)
 
 # Routing settings
 routing:
@@ -106,10 +115,16 @@ routing:
 | `model` | string | `""` | Model to use |
 | `enable_fallback` | bool | `true` | Enable fallback |
 | `fallback_agents` | []string | `[]` | Fallback order |
-| `execution_preference` | string | `"cloud"` | Execution environment |
+| `execution_preference` | string | `"auto"` | Execution environment (`auto` / `cloud` / `self-hosted`) |
 | `work_runner_group` | string | `""` | Runner group |
+| `merge_mode` | string | `"pr"` | Merge mode (`pr` = create PR, `direct` = direct push) |
+| `auto_merge` | bool | `false` | Auto-merge PRs when CI passes |
+| `auto_close_issue` | bool | `true` | Auto-close issue after PR merge |
 | `vcs_provider` | string | `"github"` | VCS provider |
 | `vcs_base_url` | string | `""` | Custom URL |
+
+> [!NOTE]
+> `execution_preference: "auto"` (default) will use a self-hosted runner if available, falling back to cloud execution.
 
 ### repos[].workers
 
@@ -124,7 +139,7 @@ routing:
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
 | `enabled` | bool | `false` | Enable/disable SRE |
-| `gcloud_projects` | []string | `[]` | GCP project IDs |
+| `gcloud_projects` | map[string]string | `{}` | GCP project mapping (name → project_id) |
 | `error_threshold` | int | `10` | Error rate threshold |
 | `latency_threshold_ms` | int | `5000` | Latency threshold |
 | `check_interval` | duration | `"5m"` | Check interval |
@@ -136,10 +151,10 @@ routing:
 |-------|------|---------|-------------|
 | `enabled` | bool | `false` | Enable/disable AutoPilot |
 | `min_open_issues` | int | `1` | Min open Issues to start |
-| `max_per_cycle` | int | `5` | Max per cycle |
-| `max_per_day` | int | `50` | Max per day |
+| `max_per_cycle` | int | `3` | Max per cycle |
+| `max_per_day` | int | `10` | Max per day |
 | `check_interval` | duration | `"10m"` | Check interval |
-| `cooldown` | duration | `"30m"` | Cooldown |
+| `cooldown` | duration | `"1h"` | Cooldown |
 | `priority_filter` | []string | `["*"]` | Priority filter |
 | `category_filter` | []string | `["*"]` | Category filter |
 | `require_approval` | bool | `false` | Require approval |
@@ -153,7 +168,7 @@ routing:
 | `max_concurrent` | int | `5` | Global max concurrent executions |
 | `per_repo_min` | int | `1` | Min per repository |
 | `per_repo_max` | int | `3` | Max per repository |
-| `lock_ttl` | duration | `"30m"` | Lock TTL |
+| `lock_ttl` | duration | `"45m"` | Lock TTL |
 
 ### routing
 
@@ -164,11 +179,3 @@ routing:
 | `rules[].agent` | string | Agent to use |
 | `rules[].model` | string | Model to use |
 | `fallback` | []string | Fallback when no rules match |
-
-## Validating Configuration
-
-You can validate the configuration file syntax using the CLI:
-
-```bash
-ados config validate --config ados.yaml
-```

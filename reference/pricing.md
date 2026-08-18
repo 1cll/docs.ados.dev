@@ -1,27 +1,28 @@
 # Pricing Plans
 
-ADOS offers 3 plans.
+ADOS offers 4 plans.
 
 ## Plan Comparison
 
-| | Free | Pro | Team |
-|---|:---:|:---:|:---:|
-| **Monthly Price** | $0 | $29/mo | $99/seat/mo |
-| **Repositories** | 1 | 5 | Unlimited |
-| **Issues Processed/mo** | 20 | Unlimited | Unlimited |
-| **AI Agents** | Copilot | Copilot, Claude, Codex | Copilot, Claude, Codex |
-| **Issue Automation** | ✅ | ✅ | ✅ |
-| **Pipeline Watcher** | ❌ | ✅ | ✅ |
-| **SRE Agent** | ❌ | ✅ | ✅ |
-| **AutoPilot** | ❌ | ✅ | ✅ |
-| **AI Backlog** | ❌ | ✅ | ✅ |
-| **Agentic Chat** | ❌ | ✅ | ✅ |
-| **Workflows** | ❌ | ✅ | ✅ |
-| **Self-Hosted Runner** | ❌ | ✅ | ✅ |
-| **Priority Support** | ❌ | ❌ | ✅ |
-| **SLA** | ❌ | ❌ | 99.9% |
-| **Audit Logs** | ❌ | ❌ | ✅ |
-| **SSO / SAML** | ❌ | ❌ | ✅ |
+| | Free | Pro | Team | Enterprise |
+|---|:---:|:---:|:---:|:---:|
+| **Monthly Price** | $0 | $29/mo | $99/seat/mo | $499/mo |
+| **Repositories** | 1 | 5 | Unlimited | Unlimited |
+| **Issues Processed/mo** | 20 | Unlimited | Unlimited | Unlimited |
+| **AI Agents** | Copilot only | Copilot, Claude, Codex | Copilot, Claude, Codex | Copilot, Claude, Codex |
+| **Max Concurrent Agents** | 1 | 2 | Unlimited | Unlimited |
+| **Issue Automation** | ✅ | ✅ | ✅ | ✅ |
+| **Pipeline Watcher** | ❌ | ✅ | ✅ | ✅ |
+| **SRE Agent** | ❌ | ✅ | ✅ | ✅ |
+| **AutoPilot** | ❌ | ✅ | ✅ | ✅ |
+| **AI Backlog** | ❌ | ✅ | ✅ | ✅ |
+| **Agentic Chat** | ❌ | ✅ | ✅ | ✅ |
+| **Workflows** | ❌ | ✅ | ✅ | ✅ |
+| **Self-Hosted Runner** | ❌ | ✅ | ✅ | ✅ |
+| **Priority Support** | ❌ | ❌ | ✅ | ✅ |
+| **SLA** | ❌ | ❌ | 99.9% | 99.9% |
+| **Audit Logs** | ❌ | ❌ | ✅ | ✅ |
+| **SSO / SAML** | ❌ | ❌ | ✅ | ✅ |
 
 ## Free Plan
 
@@ -29,7 +30,7 @@ Ideal for individual developers and trial use.
 
 - Up to 1 repository
 - Process up to 20 Issues per month
-- GitHub Copilot agent only
+- GitHub Copilot agent only (max 1 concurrent)
 - No credit card required
 
 ## Pro Plan
@@ -38,20 +39,21 @@ Maximize productivity for serious development teams.
 
 - Up to 5 repositories
 - Unlimited Issue processing
-- All AI agents (Copilot, Claude, Codex)
+- All AI agents (Copilot, Claude, Codex) — up to 2 concurrent
 - Pipeline monitoring & auto-repair
 - SRE Agent
 - AutoPilot mode
 - AI Backlog generation
 - Agentic Chat
-- Workflow editor
+- Workflows
 - Self-hosted Runner
 
 ## Team Plan
 
-An enterprise-grade plan best suited for organization-wide adoption.
+Best suited for organization-wide adoption.
 
 - Unlimited repositories
+- Unlimited concurrent agents
 - Multi-member management
 - Priority support
 - 99.9% SLA
@@ -59,6 +61,16 @@ An enterprise-grade plan best suited for organization-wide adoption.
 - SSO / SAML support
 - Custom routing rules
 - Dedicated support channel
+
+## Enterprise Plan
+
+For large organizations with advanced requirements.
+
+- Everything in Team plan
+- Unlimited repositories and agents
+- Dedicated infrastructure options
+- Custom integrations
+- Enterprise-grade SLA
 
 ## Billing
 

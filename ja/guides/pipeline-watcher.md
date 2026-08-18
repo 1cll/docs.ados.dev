@@ -28,8 +28,6 @@ repos:
 |----------------|---------|
 | **GitHub Actions** | Webhook / API ポーリング |
 | **GitLab CI** | Webhook / API ポーリング |
-| **CircleCI** | API ポーリング |
-| **Jenkins** | Webhook |
 
 ## 検知するエラー種別
 
