@@ -114,9 +114,8 @@ Issue processing is tracked with the following statuses:
 
 | Status | Description |
 |--------|-------------|
-| `queued` | Waiting to be processed |
-| `in_progress` | AI is implementing |
-| `pr_created` | PR has been created |
-| `ci_fixing` | Auto-repairing CI failures |
-| `completed` | Merged and complete |
+| `running` | AI is implementing |
+| `completed` | Successfully finished |
 | `failed` | Processing failed |
+| `needs-human` | Requires human intervention |
+| `reset` | Reset for reprocessing |

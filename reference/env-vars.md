@@ -15,6 +15,7 @@ A list of environment variables used by ADOS.
 | `ADOS_CPUS` | ❌ | Auto-detected | Number of CPU cores to use |
 | `ADOS_MEMORY` | ❌ | Auto-detected | Memory limit |
 | `ADOS_HOSTNAME` | ❌ | Auto-detected | Hostname |
+| `ADOS_DEPLOY_ID` | ❌ | — | Deploy ID (identifies runner deployment) |
 | `ADOS_TENANT_ID` | ❌ | — | Tenant ID (for multi-tenant setups) |
 
 ### ADOS_MODE

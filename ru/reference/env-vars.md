@@ -15,6 +15,7 @@
 | `ADOS_CPUS` | ❌ | Авто | Количество ядер CPU |
 | `ADOS_MEMORY` | ❌ | Авто | Ограничение памяти |
 | `ADOS_HOSTNAME` | ❌ | Авто | Имя хоста |
+| `ADOS_DEPLOY_ID` | ❌ | — | Deploy ID (идентификация деплоя Runner) |
 | `ADOS_TENANT_ID` | ❌ | — | ID тенанта (для мультитенантных сред) |
 
 ### ADOS_MODE

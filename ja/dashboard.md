@@ -7,13 +7,17 @@ ADOS ダッシュボードは、すべての機能にアクセスできる Web �
 | ページ | 説明 |
 |--------|------|
 | **Dashboard** | ジョブ統計、成功率、トレンドチャート、リポジトリカード |
-| **Pull Requests** | AI が生成した PR 一覧、ステータス表示、マージ操作 |
-| **Monitor** | GitHub Actions のステータス、セキュリティアラート |
+| **Issues** | Issue 管理（作成・編集・クローズ・リオープン・ラベル操作） |
+| **Backlog** | AI バックログ生成 & Issue 変換 |
+| **Workflow** | ADOS パイプライン設定エディタ |
+| **Pull Requests** | AI が生成した PR 一覧、マージ操作、コンフリクト解消 |
+| **Monitor** | GitHub Actions のステータス、セキュリティアラート、ブランチ概要 |
 | **Runners** | セルフホスト Runner の管理（Issue / Chat / Pipeline） |
-| **Usage** | AI トークン使用量、コスト見積もり |
+| **Usage** | AI トークン使用量、コスト見積もり、予算設定 |
+| **Billing** | プラン管理、Stripe サブスクリプション |
 | **Feedback** | AI エージェントの品質フィードバック（PR マージ/リジェクト分析） |
 | **Logs** | サービスログの閲覧、検索、フィルタリング |
-| **Settings** | リポジトリ設定、GitHub 連携、通知、請求管理 |
+| **Settings** | リポジトリ設定、GitHub 連携、通知、Connections 管理 |
 
 ## Dashboard ページ
 

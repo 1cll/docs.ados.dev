@@ -1,88 +1,96 @@
-# Workflow Editor
+# Workflows
 
-The Workflow Editor lets you visually build automation pipelines by combining triggers and actions.
+Workflows enable a structured multi-stage process for AI-driven issue resolution: **Plan → Approval → Implement → Review**.
 
 ## Overview
 
-Build workflows without writing code using drag & drop:
+Instead of having AI jump straight into code changes, Workflows break implementation into controlled stages:
 
 ```
-[Trigger] → [Action 1] → [Action 2] → [Notify]
+[Plan] → [Approval] → [Implement] → [Review]
 ```
 
-## Triggers
+This ensures higher quality output and gives humans control over what gets implemented.
 
-Configure conditions that start a workflow:
+## Stages
 
-| Trigger | Description |
-|---------|-------------|
-| **Issue Created** | When a new issue is created |
-| **PR Merged** | When a PR is merged |
-| **CI Failed** | When CI/CD fails |
-| **Schedule** | Periodic execution (cron format) |
-| **Webhook** | Webhook from an external service |
-| **Manual** | Manual execution from the dashboard |
+### 1. Plan
 
-## Actions
+The AI agent analyzes the issue and generates an implementation plan — without making any code changes.
 
-Define the operations to execute after a trigger fires:
+| Setting | Default | Description |
+|---------|---------|-------------|
+| Model | claude-sonnet-4.5 | Planning model |
+| Timeout | 10 min | Max planning time |
 
-| Action | Description |
-|--------|-------------|
-| **Run Tests** | Execute tests |
-| **Build** | Execute a build |
-| **Deploy** | Execute a deployment |
-| **Notify** | Send a notification (Slack / Discord / Email) |
-| **AI Analyze** | Have AI analyze the code |
-| **Create Issue** | Automatically create a new issue |
-| **Create PR** | Automatically create a PR |
+The plan includes:
+- Files to be modified
+- Approach and rationale
+- Estimated complexity
 
-## Workflow Examples
+### 2. Approval (Optional)
 
-### Auto-Test & Notify After PR Merge
+If `require_approval` is enabled, the plan is posted as a comment on the issue and waits for human approval before proceeding.
 
+- A human reviews the plan and approves or rejects it
+- Rejected plans can be revised with additional instructions
+
+### 3. Implement
+
+The AI agent implements the approved plan — creating branches, writing code, and adding tests.
+
+| Setting | Default | Description |
+|---------|---------|-------------|
+| Model | Repo's default model | Implementation model |
+| Timeout | 30 min | Max implementation time |
+
+### 4. Review
+
+A different AI model reviews the implementation for correctness, best practices, and alignment with the plan.
+
+| Setting | Default | Description |
+|---------|---------|-------------|
+| Model | gpt-5.1 | Review model |
+| Timeout | 10 min | Max review time |
+
+Review verdicts:
+- **PASS** — Implementation is good, PR is created
+- **NEEDS_REVISION** — Issues found, sent back for revision
+- **FAIL** — Fundamental problems, requires human attention
+
+## Configuration
+
+Enable workflows in your repository settings:
+
+```yaml
+repos:
+  - name: my-repo
+    workers:
+      issue_watcher:
+        enabled: true
 ```
-[PR Merged]
-  └─▶ [Run Tests]
-        ├─ Success → [Notify: Slack] "Tests passed ✅"
-        └─ Failure → [Notify: Slack] "Tests failed ❌"
-                     └─▶ [Create Issue] "Test fix needed"
-```
 
-### Periodic Security Scan
-
-```
-[Schedule: Every Monday 9:00 AM]
-  └─▶ [AI Analyze: security]
-        └─▶ [Create Issue] Create issue for each detected vulnerability
-              └─▶ [Notify: Email] Send security report
-```
-
-### Full Automation from Issue Creation to Completion
-
-```
-[Issue Created: label="ados"]
-  └─▶ [AI Implement]
-        └─▶ [Run Tests]
-              ├─ Success → [Create PR]
-              │             └─▶ [Notify: Slack]
-              └─ Failure → [AI Repair] → [Run Tests] (loop)
-```
+Workflow behavior can be configured per-repository from the dashboard **Workflow** page, where you can set the ADOS pipeline stages and models.
 
 ## Dashboard Usage
 
-1. Navigate to the **Workflows** tab
-2. Click **New Workflow**
-3. Select a trigger
-4. Add and connect actions
-5. Configure conditional branches (optional)
-6. Click **Save**
+1. Navigate to the **Workflow** tab
+2. Configure the ADOS pipeline stages for your repository
+3. Set models and timeouts for each stage
+4. Enable/disable approval gates
 
-## Workflow Status
+## Workflow State
+
+Each workflow execution is tracked in Firestore and can be monitored from the dashboard:
 
 | Status | Description |
 |--------|-------------|
-| 🟢 Active | Enabled and running |
-| 🟡 Paused | Temporarily paused |
-| 🔴 Error | Stopped due to error |
-| ⚪ Draft | Draft (not activated) |
+| `planning` | Plan is being generated |
+| `awaiting_approval` | Waiting for human approval |
+| `implementing` | Code is being implemented |
+| `reviewing` | Implementation is being reviewed |
+| `completed` | All stages passed successfully |
+| `failed` | Workflow failed at some stage |
+
+> [!TIP]
+> Using different AI models for planning, implementation, and review can improve output quality by providing diverse perspectives.

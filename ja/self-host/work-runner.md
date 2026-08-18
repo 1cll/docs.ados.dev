@@ -42,6 +42,7 @@ ADOS マネージドインフラ上で自動実行されます。セットアッ
 | `ADOS_CPUS` | ❌ | 使用する CPU コア数 |
 | `ADOS_MEMORY` | ❌ | メモリ制限 |
 | `ADOS_HOSTNAME` | ❌ | ホスト名（識別用） |
+| `ADOS_DEPLOY_ID` | ❌ | デプロイ ID（デプロイメントの識別） |
 | `ADOS_TENANT_ID` | ❌ | テナント ID |
 | `GITHUB_TOKEN` | ✅ | GitHub アクセストークン |
 | `ANTHROPIC_API_KEY` | ❌ | Claude API キー |
@@ -60,7 +61,7 @@ docker run -d \
   -e ANTHROPIC_API_KEY=sk-ant-xxxx \
   -v /var/run/docker.sock:/var/run/docker.sock \
   -v ados-workspace:/workspace \
-  ghcr.io/1cll/ados-work-runner:latest
+  asia-northeast1-docker.pkg.dev/ados-platform/ados/ados-work-runner:latest
 ```
 
 ### Docker Compose で起動
@@ -69,7 +70,7 @@ docker run -d \
 version: '3.8'
 services:
   work-runner:
-    image: ghcr.io/1cll/ados-work-runner:latest
+    image: asia-northeast1-docker.pkg.dev/ados-platform/ados/ados-work-runner:latest
     environment:
       - ADOS_API_URL=https://api.ados.dev
       - ADOS_TOKEN=${ADOS_TOKEN}

@@ -19,13 +19,16 @@ Agentic Chat позволяет в реальном времени общать�
 2. Нажмите на иконку чата
 3. Введите запрос на естественном языке
 
-### Из CLI
+### Через Self-Hosted Work Runner
+
+Agentic Chat доступен, когда Work Runner работает в режиме `chat` или `all`:
 
 ```bash
-# Запуск в режиме Agentic Chat
-export ADOS_MODE=chat
-ados start
+# Установите ADOS_MODE=chat или ADOS_MODE=all в окружении Work Runner
+ADOS_MODE=chat
 ```
+
+Подробнее см. [Настройка Work Runner](self-host/work-runner.md).
 
 ## Примеры диалогов
 

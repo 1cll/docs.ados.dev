@@ -28,8 +28,6 @@ repos:
 |----------|-----------------|
 | **GitHub Actions** | Webhook / API polling |
 | **GitLab CI** | Webhook / API polling |
-| **CircleCI** | API polling |
-| **Jenkins** | Webhook |
 
 ## Detected Error Types
 

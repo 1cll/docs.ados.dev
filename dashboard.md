@@ -7,13 +7,17 @@ The ADOS Dashboard is a web-based management console that provides access to all
 | Page | Description |
 |------|-------------|
 | **Dashboard** | Job stats, success rates, trend charts, repository cards |
-| **Pull Requests** | List of AI-generated PRs, status display, merge actions |
-| **Monitor** | GitHub Actions status, security alerts |
+| **Issues** | Issue management (create, edit, close, reopen, label) |
+| **Backlog** | AI backlog generation & Issue conversion |
+| **Workflow** | ADOS pipeline configuration editor |
+| **Pull Requests** | List of AI-generated PRs, merge actions, conflict resolution |
+| **Monitor** | GitHub Actions status, security alerts, branch overview |
 | **Runners** | Self-hosted Runner management (Issue / Chat / Pipeline) |
-| **Usage** | AI token usage, cost estimates |
+| **Usage** | AI token usage, cost estimates, budget settings |
+| **Billing** | Plan management, Stripe subscription |
 | **Feedback** | AI agent quality feedback (PR merge/reject analysis) |
 | **Logs** | Service log viewing, search, and filtering |
-| **Settings** | Repository settings, GitHub integration, notifications, billing |
+| **Settings** | Repository settings, GitHub integration, notifications, connections |
 
 ## Dashboard Page
 

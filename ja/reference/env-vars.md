@@ -15,6 +15,7 @@ ADOS で使用される環境変数の一覧です。
 | `ADOS_CPUS` | ❌ | 自動検出 | 使用する CPU コア数 |
 | `ADOS_MEMORY` | ❌ | 自動検出 | メモリ制限 |
 | `ADOS_HOSTNAME` | ❌ | 自動検出 | ホスト名 |
+| `ADOS_DEPLOY_ID` | ❌ | — | デプロイ ID（Runner デプロイメントの識別） |
 | `ADOS_TENANT_ID` | ❌ | — | テナント ID（マルチテナント用） |
 
 ### ADOS_MODE
